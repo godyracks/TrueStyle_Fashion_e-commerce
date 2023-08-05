@@ -1,0 +1,22 @@
+.container1 {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 50px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+h2 {
+    color: #e74c3c;
+    margin-bottom: 20px;
+}
+p {
+    margin-bottom: 20px;
+}
+.contact-link1 {
+    color: #3498db;
+    text-decoration: none;
+}
+.contact-link1:hover {
+    text-decoration: underline;
+}

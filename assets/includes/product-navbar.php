@@ -1,3 +1,24 @@
+<?php
+         // Fetch the cart count
+            $cartCount = 0;
+            if (isset($_SESSION['SESSION_EMAIL'])) {
+                $userID = $_SESSION['SESSION_EMAIL'];
+                $cartQuery = "SELECT COUNT(*) AS count FROM cart WHERE user_id = '$userID'";
+                $cartResult = mysqli_query($conn, $cartQuery);
+                $cartCount = mysqli_fetch_assoc($cartResult)['count'];
+            }
+
+            // Fetch the wishlist count
+// $wishlistCount = 0;
+// if (isset($_SESSION['SESSION_EMAIL'])) {
+//     $userID = $_SESSION['SESSION_EMAIL'];
+//     $wishlistQuery = "SELECT COUNT(*) AS count FROM wishlist WHERE user_id = '$userID'";
+//     $wishlistResult = mysqli_query($conn, $wishlistQuery);
+//     $wishlistCount = mysqli_fetch_assoc($wishlistResult)['count'];
+// }
+
+          ?>    
+    
     <!-- Navigation -->
     <div class="top-nav">
       <div class="container d-flex">
@@ -42,27 +63,38 @@
             </div>
             <a href="cart.html" class="icon">
               <i class="bx bx-cart"></i>
-              <span class="d-flex">0</span>
+              <span class="d-flex"><?php echo $cartCount; ?></span>
             </a>
           </li>
         </ul>
 
         <div class="icons d-flex">
-          <a href="login.html" class="icon">
+        <?php
+        session_start();
+        if (isset($_SESSION['SESSION_EMAIL'])) {
+          // User is logged in
+          echo '<a href="/truestylev1/logout" class="icon">
+            <i class="bx bx-log-out"></i>
+          </a>';
+        } else {
+          // User is not logged in
+          echo '<a href="/truestylev1/login" class="icon">
             <i class="bx bx-user"></i>
-          </a>
-          <div class="icon">
-            <i class="bx bx-search"></i>
-          </div>
-          <div class="icon">
-            <i class="bx bx-heart"></i>
-            <span class="d-flex">0</span>
-          </div>
-          <a href="cart.html" class="icon">
-            <i class="bx bx-cart"></i>
-            <span class="d-flex">0</span>
-          </a>
+          </a>';
+        }
+        ?>
+        <div class="icon">
+          <i class="bx bx-search"></i>
         </div>
+        <div class="icon">
+          <i class="bx bx-heart"></i>
+          <span class="d-flex">0</span>
+        </div>
+        <a href="/truestylev1/cart" class="icon">
+          <i class="bx bx-cart"></i>
+          <span class="d-flex"><?php echo $cartCount; ?></span>
+        </a>
+      </div>
 
         <div class="hamburger">
           <i class="bx bx-menu-alt-left"></i>

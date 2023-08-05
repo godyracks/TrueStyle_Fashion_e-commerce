@@ -14,7 +14,7 @@
           </div>
           <div class="product-info">
             <span>MEN'S CLOTHES</span>
-            <a href="productDetails.html">Quis Nostrud Exercitation</a>
+            <a href="../details">Quis Nostrud Exercitation</a>
             <h4>KES 700</h4>
           </div>
           <ul class="icons">

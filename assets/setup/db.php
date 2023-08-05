@@ -1,4 +1,6 @@
 <?php
+//ob_start();
+session_start();
 
 $host = 'localhost';
 $username = 'root';
@@ -13,7 +15,7 @@ if (!$conn) {
     die('Connection failed: ' . mysqli_connect_error());
 }
 
-echo 'Connected successfully';
+//echo 'Connected successfully';
 
 // ... Rest of your code ...
 
