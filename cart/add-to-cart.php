@@ -1,6 +1,7 @@
-<?php include_once('../assets/product-page-temp/product-header.php') ?>
-
 <?php
+//session_start();
+include_once('../assets/setup/db.php'); // Include your database connection here
+
 $user_id = $_SESSION['SESSION_EMAIL'];
 
 if (!isset($user_id)) {
@@ -8,7 +9,6 @@ if (!isset($user_id)) {
     exit();
 }
 
-// Handle Add to Cart Logic
 if (isset($_POST['add_to_cart'])) {
     $productID = $_POST['product_id'];
     $quantity = $_POST['quantity'];
@@ -21,6 +21,7 @@ if (isset($_POST['add_to_cart'])) {
     if ($check_result && mysqli_num_rows($check_result) > 0) {
         // Product already exists in the cart
         $message = 'Product already exists in the cart.';
+        // You might want to handle this case appropriately
     } else {
         // Retrieve product details from the database based on product ID
         $query = "SELECT * FROM products WHERE id = $productID";
@@ -38,25 +39,8 @@ if (isset($_POST['add_to_cart'])) {
             exit();
         } else {
             $message = 'Product not found.';
+            // You might want to handle this case appropriately
         }
     }
 }
-
-if (isset($_POST['update_cart'])) {
-    $update_quantity = $_POST['cart_quantity'];
-    $update_id = $_POST['cart_id'];
-    mysqli_query($conn, "UPDATE `cart` SET quantity = '$update_quantity' WHERE id = '$update_id'") or die('query failed');
-    $message[] = 'Cart quantity updated successfully!';
-}
-
-if (isset($_GET['remove'])) {
-    $remove_id = $_GET['remove'];
-    mysqli_query($conn, "DELETE FROM `cart` WHERE id = '$remove_id'") or die('query failed');
-    header('location:../cart/');
-}
 ?>
-
-
-<?php include_once('../assets/cart-temp/cart-items.php') ?>
-<?php include_once('../assets/cart-temp/latest.php') ?>
-<?php include_once('../assets/cart-temp/cart-footer.php') ?>

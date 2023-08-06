@@ -54,3 +54,17 @@ CREATE TABLE `products` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;
 
+ALTER TABLE `products`
+ADD COLUMN `discount` decimal(10, 2) DEFAULT NULL AFTER `price`;
+
+
+--FEATURED PRODUCTS--
+
+CREATE TABLE featured_products (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  category VARCHAR(255) NOT NULL,
+  price DECIMAL(10, 2) NOT NULL,
+  discount INT,
+  image VARCHAR(255) NOT NULL
+);

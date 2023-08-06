@@ -22,18 +22,24 @@ if(isset($_POST['add_product'])){
    $p_category = $_POST['p_category'];
    $p_description = $_POST['p_description'];
    $p_price = $_POST['p_price'];
+   $p_discount = $_POST['p_discount'];
    $p_image = $_FILES['p_image']['name'];
    $p_image_tmp_name = $_FILES['p_image']['tmp_name'];
    $p_image_folder = '../uploaded_img/'.$p_image;
+   $p_featured = isset($_POST['p_featured']) ? 1 : 0;
 
-   $insert_query = mysqli_prepare($conn, "INSERT INTO `products` (name, category, description, price, image) VALUES (?, ?, ?, ?, ?)");
-   mysqli_stmt_bind_param($insert_query, "sssis", $p_name, $p_category, $p_description, $p_price, $p_image);
+   $insert_query = mysqli_prepare($conn, "INSERT INTO `products` (name, category, description, price, discount, image, featured) VALUES (?, ?, ?, ?, ?, ?, ?)");
+   mysqli_stmt_bind_param($insert_query, "sssiisi", $p_name, $p_category, $p_description, $p_price, $p_discount, $p_image, $p_featured);
+  
    mysqli_stmt_execute($insert_query);
 
 
    if($insert_query){
+      header('location:../admin/');
       move_uploaded_file($p_image_tmp_name, $p_image_folder);
       $message[] = 'product added successfully';
+      
+      
    }else{
       $message[] = 'could not add the product';
    }
@@ -51,31 +57,33 @@ if(isset($_GET['delete'])){
    }
 }
 
-if(isset($_POST['update_product'])){
+if (isset($_POST['update_product'])) {
    $update_p_id = $_POST['update_p_id'];
    $update_p_name = $_POST['update_p_name'];
-   $update_p_category = $_POST['update_p_category'];
-   $update_p_description = $_POST['update_p_description'];
    $update_p_price = $_POST['update_p_price'];
-   $update_p_image = $_FILES['update_p_image']['name'];
-   $update_p_image_tmp_name = $_FILES['update_p_image']['tmp_name'];
-   $update_p_image_folder = 'uploaded_img/'.$update_p_image;
+   $update_p_description = $_POST['update_p_description'];
 
-   $update_query = mysqli_query($conn, "UPDATE `products` SET name = '$update_p_name', category = '$update_p_category', description = '$update_p_description', price = '$update_p_price', image = '$update_p_image' WHERE id = '$update_p_id'");
+   // Sanitize the input
+   $update_p_name = mysqli_real_escape_string($conn, $update_p_name);
+   $update_p_price = mysqli_real_escape_string($conn, $update_p_price);
+   $update_p_description = mysqli_real_escape_string($conn, $update_p_description);
 
-   if($update_query){
-      move_uploaded_file($update_p_image_tmp_name, $update_p_image_folder);
-      $message[] = 'product updated successfully';
-      header('location:../admin/');
-   }else{
-      $message[] = 'product could not be updated';
-      header('location:../admin/');
+   // Prepare the update statement
+   $update_query = $conn->prepare("UPDATE products SET name=?, price=?, description=? WHERE id=?");
+   $update_query->bind_param("sssi", $update_p_name, $update_p_price, $update_p_description, $update_p_id);
+
+   // Execute the update statement
+   if ($update_query->execute()) {
+      $message[] = 'Product updated successfully';
+   } else {
+      $message[] = 'Product could not be updated: ' . $update_query->error;
    }
 }
 
+
 if(isset($message)){
    foreach($message as $message){
-      echo '<div class="message"><span>'.$message.'</span> <i class="fas fa-times" onclick="this.parentElement.style.display = `none`;"></i> </div>';
+      echo '<div class="message"><span>'.$message.'</span> <i class="bx bx-x" onclick="this.parentElement.style.display = `none`;"></i> </div>';
    }
 }
 
@@ -92,19 +100,28 @@ if(isset($message)){
    <input type="text" name="p_name" placeholder="enter the product name e.g denim shirts, " class="box" required>
    <input type="text" name="p_description" placeholder="enter the product brief description" class="box" required>
    <input type="number" name="p_price" min="0" placeholder="enter the product price" class="box" required>
+   <input type="number" name="p_discount" min="0" placeholder="enter the product discount (optional)" class="box" >
    <input type="file" name="p_image" accept="image/png, image/jpg, image/jpeg" class="box" required>
+   <input type="checkbox" name="p_featured" value="1"> Featured
+
    <input type="submit" value="add the product" name="add_product" class="btn">
 </form>
 
 </section>
 
+
+
 <section class="display-product-cards">
 
    <div class="card-container">
 
-      <?php
-         
-         $select_products = mysqli_query($conn, "SELECT * FROM `products`");
+   <?php
+         $limit = 3; // Number of products to display per page
+         $page = isset($_GET['page']) ? $_GET['page'] : 1; // Current page number
+
+         $offset = ($page - 1) * $limit; // Offset for pagination
+
+         $select_products = mysqli_query($conn, "SELECT * FROM `products` ORDER BY id DESC LIMIT $offset, $limit");
          if(mysqli_num_rows($select_products) > 0){
             while($row = mysqli_fetch_assoc($select_products)){
       ?>
@@ -127,7 +144,20 @@ if(isset($message)){
       ?>
 
    </div>
+            <?php
+               // Pagination logic
+               $total_products = mysqli_query($conn, "SELECT COUNT(*) as total FROM `products`");
+               $total_products = mysqli_fetch_assoc($total_products)['total'];
+               $total_pages = ceil($total_products / $limit);
 
+               if ($total_pages > 1) {
+                  echo '<div class="pagination">';
+                  for ($i = 1; $i <= $total_pages; $i++) {
+                     echo '<a href="../admin/?page=' . $i . '">' . $i . '</a>';
+                  }
+                  echo '</div>';
+               }
+            ?>
 </section>
 
 <section class="edit-form-container">
@@ -163,5 +193,21 @@ if(isset($message)){
 </section>
 
    </div>
+   <script>
 
-   <?php include_once('../assets/cart-temp/cart-footer.php'); ?>
+        // Close the edit form when cancel button is clicked
+        document.querySelector('#close-edit').onclick = () =>{
+            document.querySelector('.edit-form-container').style.display = 'none';
+            window.location.href = '../admin';
+         };
+
+         document.addEventListener('DOMContentLoaded', function() {
+    const icon = document.querySelector('.bx-x');
+    icon.addEventListener('click', function() {
+      window.location.href = '../admin';
+    });
+  });
+
+   </script>
+
+   <?php include_once('../assets/cart-temp/cart-footer.php'); ?> 

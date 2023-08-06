@@ -1,141 +1,178 @@
 h1 {
-    text-align: center;
-    margin: 20px 0;
+   text-align: center;
+   margin: 20px 0;
+}
+
+.container {
+   max-width: 1200px;
+   margin: 0 auto;
+   padding: 20px;
+}
+
+.message {
+   position: fixed;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   background-color: #fff;
+   padding: 10px 20px;
+   border-radius: 5px;
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+   z-index: 9999;
  }
 
- .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
- }
+.message span {
+   flex-grow: 1;
+}
 
- .message {
-    background-color: #f2f2f2;
-    color: #333;
-    padding: 10px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
- }
+.message i {
+   cursor: pointer;
+}
 
- .message span {
-    flex-grow: 1;
- }
+.add-product-form {
+   margin-bottom: 20px;
+}
 
- .message i {
-    cursor: pointer;
- }
+.box {
+   width: 100%;
+   padding: 10px;
+   margin-bottom: 10px;
+   border: 1px solid #ccc;
+   border-radius: 4px;
+   box-sizing: border-box;
+}
 
- .add-product-form {
-    margin-bottom: 20px;
- }
+.btn {
+   background-color: #4CAF50;
+   color: white;
+   padding: 10px 20px;
+   border: none;
+   border-radius: 4px;
+   cursor: pointer;
+}
 
- .box {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
- }
+.display-product-cards {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: space-between;
+}
 
- .btn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
- }
+.card {
+   width: 300px;
+   padding: 10px;
+   margin-bottom: 20px;
+   border: 1px solid #ccc;
+   border-radius: 4px;
+   box-sizing: border-box;
+}
 
- .display-product-cards {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
- }
+.card img {
+   width: 100%;
+   height: auto;
+   margin-bottom: 10px;
+}
 
- .card {
-    width: 300px;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
- }
+.card h4 {
+   margin: 0;
+   font-size: 18px;
+   font-weight: bold;
+}
 
- .card img {
-    width: 100%;
-    height: auto;
-    margin-bottom: 10px;
- }
+.card p {
+   margin: 5px 0;
+   font-size: 16px;
+}
 
- .card h4 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: bold;
- }
+.card-actions {
+   display: flex;
+   justify-content: space-between;
+   margin-top: 10px;
+}
 
- .card p {
-    margin: 5px 0;
-    font-size: 16px;
- }
+.delete-btn,
+.option-btn {
+   color: white;
+   padding: 5px 10px;
+   border: none;
+   border-radius: 4px;
+   cursor: pointer;
+}
 
- .card-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
- }
+.delete-btn {
+   background-color: #f44336;
+}
 
- .delete-btn,
- .option-btn {
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
- }
+.option-btn {
+   background-color: #2196F3;
+}
 
- .delete-btn {
-    background-color: #f44336;
- }
+.empty {
+   text-align: center;
+   font-size: 18px;
+   color: #999;
+   margin-bottom: 20px;
+}
 
- .option-btn {
-    background-color: #2196F3;
- }
+.edit-form-container {
+   display: none;
+   justify-content: center;
+   align-items: center;
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background-color: rgba(0, 0, 0, 0.5);
+   z-index: 999;
+}
 
- .empty {
-    text-align: center;
-    font-size: 18px;
-    color: #999;
-    margin-bottom: 20px;
- }
+.edit-form-container form {
+   background-color: white;
+   padding: 20px;
+   border-radius: 4px;
+}
 
- .edit-form-container {
-    display: none;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
- }
+.edit-form-container img {
+   width: 100%;
+   height: auto;
+   margin-bottom: 10px;
+}
 
- .edit-form-container form {
-    background-color: white;
-    padding: 20px;
-    border-radius: 4px;
- }
+.pagination {
+   display: flex;
+   justify-content: center;
+   margin-top: 20px;
+}
 
- .edit-form-container img {
-    width: 100%;
-    height: auto;
-    margin-bottom: 10px;
- }
+.pagination a {
+   display: inline-block;
+   width: 30px;
+   height: 30px;
+   line-height: 30px;
+   text-align: center;
+   margin: 0 5px;
+   background-color: #f2f2f2;
+   color: #333;
+   border-radius: 4px;
+   cursor: pointer;
+   text-decoration: none;
+}
 
- #close-edit {
-    background-color: #ccc;
-    margin-top: 10px;
- }
+.pagination a.active {
+   background-color: #4CAF50;
+   color: white;
+}
+
+.pagination a.prev,
+.pagination a.next {
+   width: 40px;
+   font-weight: bold;
+}
+
+.pagination a.prev:before {
+   content: '\2190';
+}
+
+.pagination a.next:before {
+   content: '\2192';
+}

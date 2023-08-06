@@ -49,11 +49,12 @@
           <a href="#terms" class="nav-link">Adverts</a>
         </li>
         <li class="nav-item">
-          <a href="#about" class="nav-link">About</a>
+          <a href="#terms" class="nav-link">Adverts</a>
+          
         </li>
-        <li class="nav-item">
-          <a href="#contact" class="nav-link">Contact</a>
-        </li>
+     
+
+      
         <li class="icons d-flex">
         <?php
         //session_start();

@@ -22,7 +22,7 @@
               <div>
                 <p><?php echo $fetch_cart['name']; ?></p>
                 <span>Price: KES <?php echo $fetch_cart['price']; ?>/-</span> <br />
-                <a href="../cart/index.php?remove=<?php echo $fetch_cart['id']; ?>" class="delete-btn" onclick="return confirm('Remove item from cart?');">Remove</a>
+                <a href="../cart/?remove=<?php echo $fetch_cart['id']; ?>" class="delete-btn" onclick="return confirm('Remove item from cart?');">Remove</a>
               </div>
             </div>
           </td>
