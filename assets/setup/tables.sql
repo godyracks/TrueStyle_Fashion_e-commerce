@@ -58,13 +58,36 @@ ALTER TABLE `products`
 ADD COLUMN `discount` decimal(10, 2) DEFAULT NULL AFTER `price`;
 
 
---FEATURED PRODUCTS--
 
-CREATE TABLE featured_products (
-  id INT PRIMARY KEY AUTO_INCREMENT,
+
+--ORDERS--
+
+CREATE TABLE orders (
+  order_id INT PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(255) NOT NULL,
-  category VARCHAR(255) NOT NULL,
-  price DECIMAL(10, 2) NOT NULL,
-  discount INT,
-  image VARCHAR(255) NOT NULL
+  number VARCHAR(20) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  method VARCHAR(50) NOT NULL,
+  flat VARCHAR(100) NOT NULL,
+  street VARCHAR(100) NOT NULL,
+  city VARCHAR(100) NOT NULL,
+  county VARCHAR(100) NOT NULL,
+  pin_code VARCHAR(20) NOT NULL,
+  total_products TEXT NOT NULL,
+  total_price DECIMAL(10, 2) NOT NULL
 );
+
+ALTER TABLE orders
+ADD order_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP AFTER total_price;
+
+CREATE TABLE wishlist (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    product_id INT NOT NULL,
+    added_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user_info(email),
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+
+

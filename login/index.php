@@ -1,55 +1,64 @@
-<?php 
-include_once '../assets/setup/db.php';
-?>
 <?php
-//session_start();
+//session_start(); // Initialize the session
+
+include_once '../assets/setup/db.php';
+
+$msg = "";
+
 if (isset($_SESSION['SESSION_EMAIL'])) {
     // Check if the user is already logged in
     header("Location:../product");
     die();
 }
 
-
-$msg = "";
-
 if (isset($_POST['submit'])) {
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $password = $_POST['psw']; // Changed from 'password' to 'psw'
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $password = $_POST['psw'];
 
-    $sql = "SELECT * FROM user_info WHERE email='{$email}'";
-    $result = mysqli_query($conn, $sql);
+    // Validate and sanitize the password
+    if (preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/', $password)) {
+        // Password meets the policy requirements
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-    if (!$result) {
-        $msg = "An error occurred while executing the query: " . mysqli_error($conn);
-    } else {
-        if (mysqli_num_rows($result) > 0) {
-            $row = mysqli_fetch_assoc($result);
-            $hashed_password = $row['password'];
+        $stmt = $conn->prepare("SELECT * FROM user_info WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-            if (password_verify($password, $hashed_password)) {
-                if ($row['is_verified'] == 1) {
-                    if ($email == 'godfreymatagaro@gmail.com') {
-                        // Check if the user is an admin
-                        $_SESSION['SESSION_EMAIL'] = $email;
-                        $_SESSION['SESSION_NAME'] = $row['name'];
-                        header("Location:../admin");
-                        die();
+        if (!$result) {
+            $msg = "An error occurred while executing the query.";
+        } else {
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                $hashed_password_db = $row['password'];
+
+                if (password_verify($password, $hashed_password_db)) {
+                    if ($row['is_verified'] == 1) {
+                        $adminEmails = array('godfreymatagaro@gmail.com', 'gmatagaro4@gmail.com', 'yetanotheradmin@example.com');
+                
+                        if (in_array($email, $adminEmails)) {
+                            $_SESSION['SESSION_EMAIL'] = $email;
+                            $_SESSION['SESSION_NAME'] = $row['name'];
+                            header("Location:../admin");
+                            die();
+                        } else {
+                            $_SESSION['SESSION_EMAIL'] = $email;
+                            $_SESSION['SESSION_NAME'] = $row['name'];
+                            header("Location:../user-profile");
+                            die();
+                        }
                     } else {
-                        // Normal user
-                        $_SESSION['SESSION_EMAIL'] = $email;
-                        $_SESSION['SESSION_NAME'] = $row['name'];
-                        header("Location:../user-profile");
-                        die();
+                        $msg = "Your email is not verified yet. Please check your inbox for the verification link.";
                     }
                 } else {
-                    $msg = "Your email is not verified yet. Please check your inbox for the verification link.";
+                    $msg = "Invalid email or password.";
                 }
             } else {
                 $msg = "Invalid email or password.";
             }
-        } else {
-            $msg = "Invalid email or password.";
         }
+    } else {
+        $msg = "Password must be at least 6 characters long and contain a mixture of letters, special characters, and numbers.";
     }
 }
 ?>
@@ -61,11 +70,10 @@ if (isset($_POST['submit'])) {
         <form method="post">
             <!-- Your form content -->
             <h1>Login</h1>
-          <p>
-            Already have an account? Login in or
-            <a href="../signup">Sign Up</a>
-          </p>
-
+            <p>
+                Already have an account? Login or
+                <a href="../signup">Sign Up</a>
+            </p>
 
             <?php if (!empty($msg)) : ?>
                 <div class="dialog active">
@@ -77,7 +85,7 @@ if (isset($_POST['submit'])) {
                 </div>
             <?php endif; ?>
             <label for="email">Email</label>
-            <input type="text" placeholder="Enter Email" name="email" required />
+            <input type="email" placeholder="Enter Email" name="email" required />
 
             <label for="psw">Password</label>
             <input type="password" placeholder="Enter Password" name="psw" required />

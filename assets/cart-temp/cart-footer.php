@@ -18,11 +18,22 @@
         <div class="col d-flex">
           <span><i class="bx bxl-facebook-square"></i></span>
           <span><i class="bx bxl-instagram-alt"></i></span>
-          <span><i class="bx bxl-github"></i></span>
+          <!-- <span><i class="bx bxl-github"></i></span> -->
           <span><i class="bx bxl-twitter"></i></span>
           <span><i class="bx bxl-pinterest"></i></span>
         </div>
       </div>
+      
+      <br />
+      <br />
+      <hr />
+      <div class="col d-flex">
+        <h5>Contact Developer</h5> 
+        <span style="font-size:12px;"> <a href="https://github.com/GodyRacks/" style="text-decoration: underline;">Godfrey Matagaro  <i class="bx bxl-github"></i></a></span>
+        <br />
+        <p><span class="circle-c">&copy;</span> TrueStyle. All Rights Reserved</p>
+    </div>
+    <hr />
     </footer>
 
     <!-- Custom Script -->

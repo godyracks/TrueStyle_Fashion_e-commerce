@@ -508,7 +508,8 @@ Hero Media Query
 .product-item .icons li {
   background-color: var(--white);
   text-align: center;
-  padding: 1rem 1.5rem;
+  /* padding: 1rem 1.5rem; */
+  padding: 0px;
   font-size: 2.3rem;
   cursor: pointer;
   transition: 300ms ease-out;

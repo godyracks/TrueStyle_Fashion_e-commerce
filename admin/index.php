@@ -9,7 +9,7 @@ if (!isset($_SESSION['SESSION_EMAIL'])) {
 }
 
 // Check if the user is an admin
-if ($_SESSION['SESSION_EMAIL'] !== 'godfreymatagaro@gmail.com') {
+if ($_SESSION['SESSION_EMAIL'] !== 'godfreymatagaro@gmail.com' && $_SESSION['SESSION_EMAIL'] !== 'gmatagaro4@gmail.com' && $_SESSION['SESSION_EMAIL'] !== 'another1@gmail.com') {
    // Redirect the normal user to a different page or display an error message
    header("Location: ../access_denied");
    exit();

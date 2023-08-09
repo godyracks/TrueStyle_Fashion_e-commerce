@@ -15,7 +15,7 @@ if (isset($_POST['add_to_cart'])) {
     $product_id = $_POST['id'];
 
     // Check if the product is already in the cart
-    $check_query = "SELECT * FROM cart WHERE user_id = '$user_id' AND id = '$product_id'";
+    $check_query = "SELECT * FROM cart WHERE name = '{$product['name']}'";
     $check_result = mysqli_query($conn, $check_query);
 
     if ($check_result && mysqli_num_rows($check_result) > 0) {
