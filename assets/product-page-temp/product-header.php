@@ -33,6 +33,9 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css"
     />
+    <link rel="stylesheet" href="../ckeditor/sample/style.css">
+    <!-- Include CKEditor JavaScript -->
+<script src="../ckeditor/src/script.ts"></script>
     <!-- Custom StyleSheet -->
     <link rel="stylesheet" href="../css/styles.css" />
     <link rel="stylesheet" href="custom.css" />

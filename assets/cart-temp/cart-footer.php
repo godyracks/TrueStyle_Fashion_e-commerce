@@ -35,7 +35,9 @@
     </div>
     <hr />
     </footer>
-
+    <script src="https://cdn.jsdelivr.net/npm/froala-editor@3.2.6/js/froala_editor.pkgd.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script src="../scripts/jquery.min.js" type="text/javascript"></script> 
     <!-- Custom Script -->
     <script src="../js/index.js"></script>
   </body>

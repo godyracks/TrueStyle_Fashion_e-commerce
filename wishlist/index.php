@@ -1,6 +1,9 @@
 <?php include_once('../assets/product-page-temp/product-header.php') ?>
+
 <div class="container cart">
   <?php
+  session_start(); // Start the session
+
   $user_id = $_SESSION['SESSION_EMAIL'];
 
   if (!isset($user_id)) {
@@ -28,24 +31,25 @@
                   <img src="../uploaded_img/' . $product['image'] . '" alt="" />
                   <div>
                     <p>' . $product['name'] . '</p>
-                    <span>Price: KES ' . $product['price'] . '/-</span>
+                    <span>Price: KES ' . $product['price'] . '/-</span><br />
+                    <a href="./add_to_wishlist.php?remove=' . $fetch_wishlist['id'] . '" class="delete-btn" onclick="return confirm(\'Remove item from wishlist?\');">Remove</a>
                   </div>
                 </div>
               </td>
               <td>
-                <form action="../cart/add-to-cart.php" method="post">
+                <form action="../cart/" method="post">
                   <input type="hidden" name="product_id" value="' . $product['id'] . '">
-                  <input type="submit" value="Add to Cart" class="option-btn">
+                  <input name="add_to_cart" type="submit" value="Add to Cart" class="option-btn">
                 </form>
               </td>
             </tr>';
     }
     echo '</table>';
   } else {
-    echo '<img src="../images/wishlist.jpg" alt="Wishlist Not Found" />
+    echo '<img src="../images/wishlist.png" alt="Wishlist Not Found" />
           <p style="color: green; font-size: 20px;">Your wishlist is empty. Start adding products!</p>';
   }
   ?>
 </div>
-<!-- <?php include_once('../assets/cart-temp/latest.php') ?> -->
+
 <?php include_once('../assets/cart-temp/cart-footer.php') ?>

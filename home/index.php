@@ -6,6 +6,7 @@
 <?php include_once('../assets/templates/_promo-banner.php') ?>  
 <?php include_once('../assets/templates/_featured-products.php') ?>  
 <?php include_once('../assets/templates/_contact.php') ?>  
+<?php include_once('../assets/templates/_popup.php') ?>  
 <?php include_once('../assets/includes/footer.php') ?>
 
 

@@ -17,6 +17,28 @@ $offset = ($currentPage - 1) * $itemsPerPage;
 $query = "SELECT * FROM products LIMIT $offset, $itemsPerPage";
 $select_product = mysqli_query($conn, $query) or die('Query failed');
 ?>
+<style>
+.pagination {
+    text-align: center;
+}
+
+.pagination a {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 4px;
+    background-color: #ccc;
+    color: #333;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.pagination a:hover {
+    background-color: #666;
+    color: #fff;
+}
+
+
+</style>
 
 <section class="section all-products" id="products">
     <div class="top container">
@@ -54,8 +76,13 @@ $select_product = mysqli_query($conn, $query) or die('Query failed');
                         <h4>KES <?php echo $product['price']; ?></h4>
                     </div>
                     <ul class="icons">
-                        <li><i class="bx bx-heart"></i></li>
-                        <li><i class="bx bx-search"></i></li>
+                    <li><form method="post" action="../wishlist/add_to_wishlist.php">
+                        <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+                        <input type="hidden" name="id" value="<?php echo $product['id']; ?>">
+                        <input type="hidden" name="quantity" value="1"> <!-- You can adjust the quantity as needed -->
+                        <button type="submit" name="add_to_wishlist" class="add-to-cart-btn"><i class="bx bx-heart" style="font-size: 10px;"></i></button>
+                    </form></li>
+                        <li><a href="../details/?id=<?php echo $product['id']; ?>"><i class='bx bx-dots-vertical-rounded bx-tada' ></i></a></li>
                                             <li><form method="post" action="../cart/add-to-cart.php">
                         <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
                         <input type="hidden" name="id" value="<?php echo $product['id']; ?>">

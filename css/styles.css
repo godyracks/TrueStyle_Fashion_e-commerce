@@ -73,12 +73,12 @@ Header
 
 .top-nav div {
   justify-content: space-between;
-  height: 4.5rem;
+  height: 1rem;
 }
 
 .top-nav a {
   color: var(--white);
-  padding: 0 0.5rem;
+  padding: 0 0rem;
 }
 
 /* 
@@ -87,8 +87,8 @@ Navigation
 =================
 */
 .navigation {
-  height: 6rem;
-  line-height: 6rem;
+  height: 0rem;
+  line-height: 0rem;
 }
 
 .nav-center {
@@ -105,7 +105,7 @@ Navigation
 
 .nav-center .nav-link {
   font-size: 1.8rem;
-  padding: 1rem;
+  padding: 1rem;  /* 1rem*/
 }
 
 .nav-center .nav-link:hover {
@@ -168,12 +168,12 @@ Navigation
   }
 
   .nav-list .nav-item {
-    margin: 0 0 1rem 0;
+    margin:  0;
     width: 100%;
   }
 
   .nav-list .nav-link {
-    font-size: 2rem;
+    font-size: 1rem;
     color: var(--black);
   }
 

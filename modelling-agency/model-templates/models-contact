@@ -1,0 +1,73 @@
+<?php
+require '../../vendor/autoload.php';
+
+include_once '../../assets/setup/db.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+
+// require 'path/to/PHPMailer/src/PHPMailer.php';
+// require 'path/to/PHPMailer/src/SMTP.php';
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Initialize PHPMailer
+    $mail = new PHPMailer(true);
+
+    try {
+        // Set up SMTP
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.yourhostingprovider.com'; // Replace with your hosting provider's SMTP server
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'your_username';
+        $mail->Password   = 'your_password';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Use TLS or SSL based on your provider's settings
+        $mail->Port       = 587; // Use the appropriate port
+
+        // Set up email content
+        $mail->setFrom($_POST['email'], $_POST['name']);
+        $mail->addAddress('models@truestyle.co.ke');
+        $mail->Subject = 'Model Application Form Submission';
+
+        // Build the email body
+        $message = "Name: " . $_POST['name'] . "\n";
+        $message .= "Email: " . $_POST['email'] . "\n";
+        $message .= "Message: " . $_POST['message'];
+        $mail->Body = $message;
+
+        // Attach uploaded photos
+        if (!empty($_FILES['photos']['name'][0])) {
+            foreach ($_FILES['photos']['tmp_name'] as $key => $tmp_name) {
+                $file_name = $_FILES['photos']['name'][$key];
+                $file_tmp = $_FILES['photos']['tmp_name'][$key];
+                $mail->addAttachment($file_tmp, $file_name);
+            }
+        }
+
+        // Send the email
+        $mail->send();
+        echo 'Message has been sent';
+    } catch (Exception $e) {
+        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+    }
+}
+?>
+
+    <h2 id="models-contact">Model Application Form</h2>
+    <p>Please fill out the form below to apply as a model:</p>
+
+    <form action="submit.php" method="post" enctype="multipart/form-data">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="photos">Photos (JPEG or PNG):</label>
+        <input type="file" id="photos" name="photos[]" accept="image/jpeg, image/png" multiple required><br><br>
+
+        <label for="message">Message:</label><br>
+        <textarea id="message" name="message" rows="4" required></textarea><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+  

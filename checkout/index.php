@@ -1,148 +1,286 @@
 <?php
 include_once('../assets/product-page-temp/product-header.php');
-
-$user_id = $_SESSION['SESSION_EMAIL'];
-
-if (!isset($user_id)) {
-    header('location:../login');
-    exit();
-}
-
-
-$select_cart = mysqli_query($conn, "SELECT cart.*, products.name AS product_name, products.price AS product_price FROM `cart` 
-                                    JOIN `products` ON cart.product_id = products.id 
-                                    WHERE cart.user_id = '$user_id'");
-$grand_total = 0;
+include_once('../assets/setup/db.php');
+// Check if the user is logged in
+$user_id = isset($_SESSION['SESSION_EMAIL']) ? $_SESSION['SESSION_EMAIL'] : null;
 $product_name = [];
 
-if (mysqli_num_rows($select_cart) > 0) {
-    while ($fetch_cart = mysqli_fetch_assoc($select_cart)) {
-        $sub_total = (float)$fetch_cart['product_price'] * (int)$fetch_cart['quantity'];
-        $grand_total += $sub_total;
-        $product_name[] = $fetch_cart['product_name'] . ' (' . $fetch_cart['quantity'] . ')';
+if (!isset($user_id)) {
+    // If user is not logged in, retrieve guest cart items
+    $session_id = session_id();
+    $select_guest_cart = mysqli_query($conn, "SELECT guest_cart.*, products.name AS product_name, products.price AS product_price FROM `guest_cart` 
+        JOIN `products` ON guest_cart.product_id = products.id WHERE guest_cart.session_id = '$session_id'") or die('query failed');
+    $grand_total = 0;
+    $product_name = [];
+
+    if (mysqli_num_rows($select_guest_cart) > 0) {
+        while ($fetch_guest_cart = mysqli_fetch_assoc($select_guest_cart)) {
+            $sub_total = (float)$fetch_guest_cart['product_price'] * (int)$fetch_guest_cart['quantity'];
+            $grand_total += $sub_total;
+            $product_name[] = $fetch_guest_cart['product_name'] . ' (' . $fetch_guest_cart['quantity'] . ')';
+        }
+    }
+} else {
+    // If user is logged in, retrieve cart items
+    $select_cart = mysqli_query($conn, "SELECT cart.*, products.name AS product_name, products.price AS product_price FROM `cart` 
+        JOIN `products` ON cart.product_id = products.id WHERE cart.user_id = '$user_id'") or die('query failed');
+    $grand_total = 0;
+    $product_name = [];
+
+    if (mysqli_num_rows($select_cart) > 0) {
+        while ($fetch_cart = mysqli_fetch_assoc($select_cart)) {
+            $sub_total = (float)$fetch_cart['product_price'] * (int)$fetch_cart['quantity'];
+            $grand_total += $sub_total;
+            $product_name[] = $fetch_cart['product_name'] . ' (' . $fetch_cart['quantity'] . ')';
+        }
     }
 }
 
 if (isset($_POST['order_btn'])) {
     $name = $_POST['name'];
-    $number = $_POST['number'];
     $email = $_POST['email'];
-    $method = $_POST['method'];
-    $flat = $_POST['flat'];
-    $street = $_POST['street'];
+    $address = $_POST['address'];
     $city = $_POST['city'];
-    $county = $_POST['county'];
-    $pin_code = $_POST['pin_code'];
+    $zip = $_POST['zip'];
+    $payment_method = $_POST['payment-method'];
 
-    $total_product = implode(', ', $product_name);
-    $detail_query = mysqli_prepare($conn, "INSERT INTO `orders` (name, number, email, method, flat, street, city, county, pin_code, total_products, total_price, order_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)");
+    $total_products = implode(', ', $product_name);
 
-    mysqli_stmt_bind_param($detail_query, "ssssssssssd", $name, $number, $email, $method, $flat, $street, $city, $county, $pin_code, $total_product, $grand_total);
-    mysqli_stmt_execute($detail_query);
+    $numeric_total_price = (float)str_replace(',', '', $grand_total);
 
-    if ($detail_query) {
-        echo "
-        <div class='modal-overlay'>
-            <div class='modal-dialog'>
-                <div class='message-container'>
-                    <h3>Thank you for shopping!</h3>
-                    <div class='order-detail'>
-                        <span>".$total_product."</span>
-                        <span class='total'> total: KES ".$grand_total."/- </span>
-                    </div>
-                    <div class='customer-details'>
-                        <p>your name: <span>".$name."</span></p>
-                        <p>your number: <span>".$number."</span></p>
-                        <p>your email: <span>".$email."</span></p>
-                        <p>your address: <span>".$flat.", ".$street.", ".$city.", ".$county.", ".$pin_code."</span></p>
-                        <p>your payment mode: <span>".$method."</span></p>
-                        <p>(*pay when product arrives*)</p>
-                    </div>
-                    <a href='../user-profile' class='btn'>Track Order</a>
-                    <a href='../product' class='btn'>Continue Shopping</a>
-                </div>
-            </div>
-        </div>";
+    // Insert order details into the orders table
+    $insert_order_query = mysqli_prepare($conn, "INSERT INTO `orders` (name, email, address, city, zip, payment_method, total_products, total_price) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
-     
-        // Check if the order details were inserted successfully
-        if (mysqli_stmt_affected_rows($detail_query) > 0) {
-            // Delete cart items for the user
-            $delete_query = mysqli_query($conn, "DELETE FROM `cart` WHERE user_id = '$user_id'");
-            if (!$delete_query) {
-                echo "Error deleting cart items: " . mysqli_error($conn);
-            }
-        } else {
-            echo "Error inserting order details: " . mysqli_error($conn);
-        }
+if ($insert_order_query === false) {
+    echo "Error preparing insert query: " . mysqli_error($conn);
+} else {
+    mysqli_stmt_bind_param($insert_order_query, "sssssssd", $name, $email, $address, $city, $zip, $payment_method, $total_products, $grand_total);
 
-        mysqli_stmt_close($detail_query);
+    mysqli_stmt_execute($insert_order_query);
+
+    if ($insert_order_query) {
+        // Order insertion successful, you can perform further actions here
+        // For example, send order confirmation email, clear the user's cart, etc.
+        echo "Order placed successfully!";
+    } else {
+        echo "Error inserting order details: " . mysqli_error($conn);
     }
+
+    mysqli_stmt_close($insert_order_query);
+}
 }
 ?>
+    <style>
 
-<div class="container4">
-    <section class="checkout-form">
-        <?php if (!empty($product_name)): ?>
-            <h1 class="heading">complete your order</h1>
-            <form action="" method="post">
-                <!-- Display order details -->
-                <div class="display-order">
-                    <?php foreach ($product_name as $product): ?>
-                        <label><?= $product; ?></label>
-                    <?php endforeach; ?>
-                    <label class="grand-total"> grand total : KES <?= $grand_total; ?>/- </label>
-                </div>
+.container4 {
+   max-width: 800px;
+   margin: 0 auto;
+   padding: 20px;
+   background-color: #fff;
+   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
 
-                <!-- Customer details form -->
-                <div class="flex">
-                <div class="inputBox">
-                        <label>Your name</label>
-                        <input type="text" placeholder="enter your name" name="name" required>
-                    </div>
-                    <div class="inputBox">
-                        <label>Your number</label>
-                        <input type="number" placeholder="enter your number" name="number" required>
-                    </div>
-                    <div class="inputBox">
-                        <label>Your email</label>
-                        <input type="email" placeholder="enter your email" name="email" required>
-                    </div>
-                    <div class="inputBox">
-                        <label>Payment Method</label>
-                        <select name="method">
-                            <option value="cash on delivery" selected>Cash On Delivery</option>
-                            <option value="m-pesa">M-PESA</option>
-                            <option value="visa">VISA</option>
-                        </select>
-                    </div>
-                    <div class="inputBox">
-                        <label>Sreet 1</label>
-                        <input type="text" placeholder="e.g. flat no." name="flat" required>
-                    </div>
-                    <div class="inputBox">
-                        <label>Street 2</label>
-                        <input type="text" placeholder="e.g. University Way" name="street" required>
-                    </div>
-                    <div class="inputBox">
-                        <label>City or Town</label>
-                        <input type="text" placeholder="e.g. Nairobi" name="city" required>
-                    </div>
-                    <div class="inputBox">
-                        <label>County</label>
-                        <input type="text" placeholder="e.g. Nairobi" name="county" required>
-                    </div>
-                    <div class="inputBox">
-                        <label>Pin Code</label>
-                        <input type="text" placeholder="e.g. 123456" name="pin_code" required>
-                    </div>
-                </div>
-                <input type="submit" value="order now" name="order_btn" class="btn">
-            </form>
-        <?php else: ?>
-            <div class='display-order'><p>Your cart is empty!</p></div>
-        <?php endif; ?>
-    </section>
+h1 {
+   font-size: 24px;
+   margin-bottom: 20px;
+}
+
+h2 {
+   font-size: 18px;
+   margin-bottom: 10px;
+}
+
+/* Order summary */
+.order-summary {
+   background-color: #f9f9f9;
+   padding: 20px;
+   border-radius: 5px;
+}
+
+.order-item {
+   display: flex;
+   margin-bottom: 10px;
+}
+
+.order-item img {
+   max-width: 80px;
+   margin-right: 10px;
+}
+
+.total {
+   text-align: right;
+   margin-top: 10px;
+   font-weight: bold;
+}
+
+/* Checkout form */
+.checkout-form {
+   background-color: #f9f9f9;
+   padding: 20px;
+   border-radius: 5px;
+}
+
+.form-group {
+   margin-bottom: 15px;
+}
+
+label {
+   font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="radio"] {
+   width: 100%;
+   padding: 10px;
+   border: 1px solid #ccc;
+   border-radius: 5px;
+   font-size: 16px;
+}
+
+input[type="radio"] {
+   margin-right: 5px;
+}
+
+.checkout-button {
+   background-color: #007BFF;
+   color: #fff;
+   padding: 10px 20px;
+   border: none;
+   border-radius: 5px;
+   font-size: 18px;
+   cursor: pointer;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+   .container {
+       padding: 10px;
+   }
+   h1 {
+       font-size: 20px;
+       margin-bottom: 15px;
+   }
+   h2 {
+       font-size: 16px;
+       margin-bottom: 8px;
+   }
+}
+
+
+    </style>
+
+    <div class="container4">
+        <h1>Checkout</h1>
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+            <!-- Display order items here -->
+            <?php
+// Loop through each product in the $product_name array and display its details
+foreach ($product_name as $product) {
+    // Split the product name and quantity from the formatted string
+    list($productName, $quantity) = explode(' (', $product);
+    $quantity = rtrim($quantity, ')'); // Remove the closing parenthesis
+
+    // Fetch additional product details (e.g., price) from your database based on $productName
+    // You need to modify this part to fetch actual product details
+    // Replace 'YourProductTable' and 'YourPriceColumn' with actual table and column names
+    $query = mysqli_query($conn, "SELECT price, image FROM products WHERE name = '$productName'");
+    $productData = mysqli_fetch_assoc($query);
+    $price = $productData['price'];
+    $image = $productData['image'];
+
+    // Calculate subtotal for this product
+    $subtotal = (float)$price * (int)$quantity;
+     $subtotals[] = $subtotal; // Store subtotal in the array
+?>
+<div class="order-item">
+<img src="../uploaded_img/<?= $image; ?>" alt="<?= $productName; ?>">
+
+    <div class="product-details">
+        <h3><?= $productName; ?></h3>
+        <p>Price: KSh <?= $price; ?></p>
+        <p>Quantity: <?= $quantity; ?></p>
+        <p>Subtotal: KSh <?= number_format($subtotal, 2); ?></p>
+    </div>
 </div>
+<?php
+}
+?>
+<div class="total">
+    <?php
+    $grandTotal = array_sum($subtotals);
+    echo "Grand Total: KSh " . number_format($grandTotal, 2);
+    ?>
+</div>
+</div>
+        <div class="checkout-form">
+            <h2>Shipping Information</h2>
+            <form action="" method="post">
+                <div class="form-group">
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address:</label>
+                    <input type="text" id="address" name="address" required>
+                </div>
+                <div class="form-group">
+                    <label for="city">City:</label>
+                    <input type="text" id="city" name="city" required>
+                </div>
+                <div class="form-group">
+                    <label for="zip">ZIP Code:</label>
+                    <input type="text" id="zip" name="zip" required>
+                </div>
+                <!-- Payment method options -->
+                <h2>Payment Method</h2>
+                <div class="form-group">
+                    <input type="radio" id="credit-card" name="payment-method" value="credit-card" required>
+                    <label for="credit-card">Credit Card</label>
+                </div>
+                <div class="form-group">
+                    <input type="radio" id="paypal" name="payment-method" value="paypal" required>
+                    <label for="paypal">PayPal</label>
+                </div>
+                <!-- Additional payment fields (e.g., credit card info) -->
+                <!-- Include JavaScript to show/hide payment fields based on selected method -->
+                <div id="credit-card-fields" class="hidden">
+                    <!-- Credit card fields go here -->
+                </div>
+                <div id="paypal-fields" class="hidden">
+                    <!-- PayPal fields go here -->
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="checkout-button" name="order_btn">Place Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="script.js">
+        // JavaScript to handle payment method selection and show/hide payment fields
+document.addEventListener("DOMContentLoaded", function () {
+    const paymentMethodRadio = document.querySelectorAll('input[name="payment-method"]');
+    const creditCardFields = document.getElementById('credit-card-fields');
+    const paypalFields = document.getElementById('paypal-fields');
 
+    paymentMethodRadio.forEach(function (radio) {
+        radio.addEventListener("change", function () {
+            if (radio.value === "credit-card") {
+                creditCardFields.classList.remove("hidden");
+                paypalFields.classList.add("hidden");
+            } else if (radio.value === "paypal") {
+                creditCardFields.classList.add("hidden");
+                paypalFields.classList.remove("hidden");
+            }
+        });
+    });
+});
+
+    </script> <!-- Include JavaScript for payment method handling -->
 <?php include_once('../assets/cart-temp/cart-footer.php') ?>

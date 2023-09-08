@@ -1,55 +1,8 @@
-<?php
-    if (isset($_SESSION['cart_message'])) {
-        echo $_SESSION['cart_message'];
-        unset($_SESSION['cart_message']);
-        unset($_SESSION['cart_message_class']);
-    }
-    ?>
-<style>
-  /* Add this CSS to style the cart message */
-.cart-message {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    display: none;
-    z-index: 9999;
-    text-align: center;
-    font-size: 16px;
-    font-weight: bold;
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
-}
-
-.cart-message.success {
-    background-color: #4caf50;
-}
-
-.cart-message.error {
-    background-color: #f44336;
-}
-
-.cart-message.show {
-    display: block;
-}
-
-.cart-message .close-btn {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    cursor: pointer;
-}
-
-</style>
-
-
 <div class="container cart">
-
   <?php
-  
+
+  // Check if the user is logged in
+  $user_id = isset($_SESSION['SESSION_EMAIL']) ? $_SESSION['SESSION_EMAIL'] : null;
 
   if (isset($_POST['update_update_btn'])) {
     $update_value = $_POST['update_quantity'];
@@ -60,9 +13,15 @@
     }
   }
 
+
+  // Initialize a flag to track if guest cart items were displayed
+  $guest_cart_displayed = false;
+
+  // Retrieve items from the user's cart if logged in
   $select_cart = mysqli_query($conn, "SELECT cart.*, products.price, products.image, products.name FROM `cart` JOIN `products` ON cart.product_id = products.id WHERE cart.user_id = '$user_id'") or die('query failed');
   $grand_total = 0;
 
+  // Check if there are items in the user's cart
   if (mysqli_num_rows($select_cart) > 0) {
     echo '<table>
             <tr>
@@ -95,7 +54,48 @@
             </tr>';
     }
     echo '</table>';
-  } else {
+  }
+
+  // If the user is not logged in, retrieve and display items from the guest cart
+  if (!$user_id) {
+    $session_id = session_id(); // Get the guest session ID
+    $select_guest_cart = mysqli_query($conn, "SELECT guest_cart.*, products.price, products.image, products.name FROM `guest_cart` JOIN `products` ON guest_cart.product_id = products.id WHERE guest_cart.session_id = '$session_id'") or die('query failed');
+
+    if (mysqli_num_rows($select_guest_cart) > 0) {
+      echo '<h2>Guest Cart Items</h2>';
+      echo '<table>
+              <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+              </tr>';
+      while ($fetch_guest_cart = mysqli_fetch_assoc($select_guest_cart)) {
+        $sub_total = (float)$fetch_guest_cart['price'] * (int)$fetch_guest_cart['quantity'];
+        $grand_total += $sub_total;
+        echo '<tr>
+                <td>
+                  <div class="cart-info">
+                    <img src="../uploaded_img/' . $fetch_guest_cart['image'] . '" alt="" />
+                    <div>
+                      <p>' . $fetch_guest_cart['name'] . '</p>
+                      <span>Price: KES ' . $fetch_guest_cart['price'] . '/-</span>
+                      <!-- You can add a remove link here for guest cart items if needed -->
+                    </div>
+                  </div>
+                </td>
+                
+               
+                <td>' . $fetch_guest_cart['quantity'] . '</td>
+                <td>KES ' . $sub_total . '/-</td>
+              </tr>';
+      }
+      echo '</table>';
+      $guest_cart_displayed = true; // Set the flag to true
+    }
+  }
+
+  // If both carts are empty, display "Cart Not Found" message
+  if (!$guest_cart_displayed && mysqli_num_rows($select_cart) === 0) {
     echo '<img src="../images/cart.jpg" alt="Cart Not Found" />
           <p style="color: orange; font-size: 20px;">Cart is empty. Start shopping now!</p>';
   }
@@ -114,14 +114,3 @@
     ?>
   </div>
 </div>
-<!-- Cart message container outside of the cart container -->
-<!-- <div class="cart-message <?php echo isset($_SESSION['cart_message_class']) ? $_SESSION['cart_message_class'] : ''; ?>" id="cartMessage">
-    <span class="close-btn" onclick="closeCartMessage()"><i class="bx bx-x"></i></span>
- 
-</div> -->
-
-<script>
-    function closeCartMessage() {
-        document.getElementById("cartMessage").classList.remove("show");
-    }
-</script>

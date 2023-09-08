@@ -1,3 +1,5 @@
+
+
 const hamburer = document.querySelector(".hamburger");
 const navList = document.querySelector(".nav-list");
 
@@ -23,4 +25,17 @@ if (popup) {
   });
 }
 
+function toggleShopDropdown() {
+  var shopDropdown = document.getElementById("shopDropdown");
+  if (shopDropdown.style.display === "block") {
+    shopDropdown.style.display = "none";
+  } else {
+    shopDropdown.style.display = "block";
+  }
+}
 
+
+
+
+
+// Hero Carousel

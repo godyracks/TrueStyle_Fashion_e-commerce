@@ -1,4 +1,7 @@
 <?php
+
+
+
 include_once('../assets/product-page-temp/product-header.php');
 
 // Check if the user is logged in
@@ -21,6 +24,8 @@ if(isset($_POST['add_product'])){
    $p_name = $_POST['p_name'];
    $p_category = $_POST['p_category'];
    $p_description = $_POST['p_description'];
+    // Sanitize the HTML content (You might need to use a proper HTML sanitizer library)
+    $p_description = htmlspecialchars($p_description);
    $p_price = $_POST['p_price'];
    $p_discount = $_POST['p_discount'];
    $p_image = $_FILES['p_image']['name'];
@@ -98,7 +103,7 @@ if(isset($message)){
    <h3>add a new product</h3>
    <input type="text" name="p_category" placeholder="CATEGORY e.g MEN'S WEAR, LADIES'S WEAR, UNISEX " class="box" required>
    <input type="text" name="p_name" placeholder="enter the product name e.g denim shirts, " class="box" required>
-   <input type="text" name="p_description" placeholder="enter the product brief description" class="box" required>
+   <div id="editor" name="p_description" required></div>
    <input type="number" name="p_price" min="0" placeholder="enter the product price" class="box" required>
    <input type="number" name="p_discount" min="0" placeholder="enter the product discount (optional)" class="box" >
    <input type="file" name="p_image" accept="image/png, image/jpg, image/jpeg" class="box" required>
@@ -191,10 +196,138 @@ if(isset($message)){
    ?>
 
 </section>
+<?php
+// Your database connection code here
+ //include_once('../../assets/setup/db.php');
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $name = $_POST["name"];
+    $caption = $_POST["caption"];
 
-   </div>
-   <script>
+    // Check if files were uploaded
+    if (isset($_FILES["images"]) && is_array($_FILES["images"]["name"])) {
+        $imageErrors = array();
 
+        // Loop through each uploaded file
+        for ($i = 0; $i < count($_FILES["images"]["name"]); $i++) {
+            $imageFileName = $_FILES["images"]["name"][$i];
+            $imageTmpName = $_FILES["images"]["tmp_name"][$i];
+            $imageFileType = strtolower(pathinfo($imageFileName, PATHINFO_EXTENSION));
+
+            // Generate a unique filename to avoid overwriting
+            $uniqueFilename = uniqid() . "." . $imageFileType;
+            $targetPath = "../model_img_uploads/" . $uniqueFilename;
+
+            // Check if the file is an image
+            $validExtensions = array("jpg", "jpeg", "png", "gif");
+            if (!in_array($imageFileType, $validExtensions)) {
+                $imageErrors[] = "File '{$imageFileName}' is not a valid image.";
+            } elseif (move_uploaded_file($imageTmpName, $targetPath)) {
+                // File was successfully uploaded, you can now insert its information into the database
+                $sql = "INSERT INTO models (name, image, caption) VALUES (?, ?, ?)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("sss", $name, $uniqueFilename, $caption);
+$stmt->execute();
+            } else {
+                $imageErrors[] = "Error uploading file '{$imageFileName}'";
+            }
+        }
+
+        if (empty($imageErrors)) {
+            // All images were uploaded successfully
+            echo "All images uploaded successfully!";
+        } else {
+            // Handle any errors related to image uploads
+            foreach ($imageErrors as $error) {
+                echo $error . "<br>";
+            }
+        }
+    } else {
+        echo "No files were uploaded.";
+    }
+}
+?>
+
+    <style>
+       
+
+       model-form {
+            background-color: #fff;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="file"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 16px;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        input[type="submit"] {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #555;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+         model-form{
+                max-width: 90%;
+            }
+        }
+    </style>
+
+    <h1>Add Model Data</h1>
+    <form action="" method="POST" enctype="multipart/form-data" class="model-form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="images">Images (Upload multiple):</label>
+        <input type="file" id="images" name="images[]" accept="image/*" multiple required class="file-input">
+
+        <label for="caption">Caption:</label>
+        <textarea id="caption" name="caption" required></textarea>
+
+        <input type="submit" value="Submit">
+    </form>
+
+</div>
+  
+
+
+   
+   <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+
+<script>
+    ClassicEditor
+    .create(document.querySelector('#editor'))
+    .catch(error => {
+      console.error(error);
+    });
         // Close the edit form when cancel button is clicked
         document.querySelector('#close-edit').onclick = () =>{
             document.querySelector('.edit-form-container').style.display = 'none';
