@@ -136,7 +136,7 @@ input[type="submit"] {
 
 <h1>Create a New Job</h1>
 <form action="" method="post">
-    <label for="job_name">Job Name:</label>
+    <label for="job_name">Job Title:</label>
     <input type="text" id="job_name" name="job_name" required><br>
     
     <label for="job_category">Job Category:</label>
@@ -148,37 +148,37 @@ input[type="submit"] {
     <label for="job_description">Job Description:</label>
     <textarea id="job_description" name="job_description"></textarea><br>
     
-    <label for="job_responsibility">Job Responsibility:</label><br>
-    <input type="text" name="responsibility_key[]" placeholder="Key 1">
-    <input type="text" name="responsibility_value[]" placeholder="Value 1"><br>
+    <label for="job_responsibility">Responsibilities:</label><br>
+    <input type="text" name="responsibility_key[]" placeholder="Responsibility 1">
+    <input type="text" name="responsibility_value[]" placeholder="Description 1"><br>
     
-    <input type="text" name="responsibility_key[]" placeholder="Key 2">
-    <input type="text" name="responsibility_value[]" placeholder="Value 2"><br>
+    <input type="text" name="responsibility_key[]" placeholder="Responsibility 2">
+    <input type="text" name="responsibility_value[]" placeholder="Description 2"><br>
     
-    <input type="text" name="responsibility_key[]" placeholder="Key 3">
-    <input type="text" name="responsibility_value[]" placeholder="Value 3"><br>
+    <input type="text" name="responsibility_key[]" placeholder="Responsibility 3">
+    <input type="text" name="responsibility_value[]" placeholder="Description 3"><br>
     
-    <label for="job_qualifications">Job Qualifications:</label><br>
-    <input type="text" name="qualification_key[]" placeholder="Key 1">
-    <input type="text" name="qualification_value[]" placeholder="Value 1"><br>
+    <label for="job_qualifications">Qualifications:</label><br>
+    <input type="text" name="qualification_key[]" placeholder="Qualification 1">
+    <input type="text" name="qualification_value[]" placeholder="Description 1"><br>
     
-    <input type="text" name="qualification_key[]" placeholder="Key 2">
-    <input type="text" name="qualification_value[]" placeholder="Value 2"><br>
+    <input type="text" name="qualification_key[]" placeholder="Qualification 2">
+    <input type="text" name="qualification_value[]" placeholder="Description 2"><br>
     
-    <input type="text" name="qualification_key[]" placeholder="Key 3">
-    <input type="text" name="qualification_value[]" placeholder="Value 3"><br>
+    <input type="text" name="qualification_key[]" placeholder="Qualification 3">
+    <input type="text" name="qualification_value[]" placeholder="Description 3"><br>
     
-    <label for="vacancy_number">Vacancy Number:</label>
+    <label for="vacancy_number">Number of Openings:</label>
     <input type="number" id="vacancy_number" name="vacancy_number"><br>
     
-     <label for="job_nature">Job Nature:</label>
+    <label for="job_nature">Job Type:</label>
     <select id="job_nature" name="job_nature" required>
         <option value="Full Time">Full Time</option>
         <option value="Part Time">Part Time</option>
         <option value="Featured">Featured</option>
     </select><br>
     
-    <label for="deadline">Deadline:</label>
+    <label for="deadline">Application Deadline:</label>
     <input type="date" id="deadline" name="deadline"><br>
     
     <label for="salary_range">Salary Range:</label>
@@ -190,7 +190,7 @@ input[type="submit"] {
     <label for="posted_date">Posted Date:</label>
     <input type="date" id="posted_date" name="posted_date" required><br>
     
-      <label for="job_poster_email">Job Poster Email:</label>
+    <label for="job_poster_email">Your Email:</label>
     <input type="email" id="job_poster_email" name="job_poster_email" required><br>
     
     <input type="submit" value="Create Job">

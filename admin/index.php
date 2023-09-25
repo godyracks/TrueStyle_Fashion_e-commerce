@@ -114,11 +114,40 @@ if(isset($message)){
 }
 
 ?>
+<style>
+    /* Style for the "Go to Jobs Admin Panel" button */
+    .go-to-admin-button {
+        text-align: right;
+        margin: 10px;
+    }
+
+    .go-to-admin-button a {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007BFF; /* Change the background color as desired */
+        color: #fff; /* Text color */
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s;
+    }
+
+    .go-to-admin-button a:hover {
+        background-color: #0056b3; /* Change the background color on hover */
+    }
+</style>
+
 
 <h1>ADMIN PANEL</h1>
 <div class="container">
 
+
 <section>
+<!-- Go to Jobs Admin Panel Button -->
+<div class="go-to-admin-button">
+    <a href="../jobs_admin/">Go to Jobs Admin Panel</a>
+</div>
+
 
 <form action="" method="post" class="add-product-form" enctype="multipart/form-data">
    <h3>add a new product</h3>
