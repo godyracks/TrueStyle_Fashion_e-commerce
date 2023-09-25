@@ -58,11 +58,19 @@ if ($insert_order_query === false) {
     mysqli_stmt_bind_param($insert_order_query, "sssssssd", $name, $email, $address, $city, $zip, $payment_method, $total_products, $grand_total);
 
     mysqli_stmt_execute($insert_order_query);
-
     if ($insert_order_query) {
         // Order insertion successful, you can perform further actions here
         // For example, send order confirmation email, clear the user's cart, etc.
-        echo "Order placed successfully!";
+        //echo "Order placed successfully!";
+        // Store the phone number, total products, and order number in the session
+        $_SESSION['phone_number'] = $phone_number;
+        $_SESSION['total_products'] = $total_products;
+        $_SESSION['orderNo'] = $orderNo;
+        $_SESSION['grand_total'] = $grand_total;
+
+        // Redirect to payments.php
+        header("Location: ../payments/");
+        exit;
     } else {
         echo "Error inserting order details: " . mysqli_error($conn);
     }
@@ -183,26 +191,28 @@ foreach ($product_name as $product) {
     list($productName, $quantity) = explode(' (', $product);
     $quantity = rtrim($quantity, ')'); // Remove the closing parenthesis
 
-    // Fetch additional product details (e.g., price) from your database based on $productName
-    // You need to modify this part to fetch actual product details
-    // Replace 'YourProductTable' and 'YourPriceColumn' with actual table and column names
-    $query = mysqli_query($conn, "SELECT price, image FROM products WHERE name = '$productName'");
+    // Fetch additional product details (e.g., price and image) from your database based on $productName
+    // Modify the query to join the product_images table to fetch the image_path
+    $query = mysqli_query($conn, "SELECT p.price, pi.image_path 
+        FROM products p 
+        JOIN product_images pi ON p.id = pi.product_id
+        WHERE p.name = '$productName'");
     $productData = mysqli_fetch_assoc($query);
     $price = $productData['price'];
-    $image = $productData['image'];
+    $imagePath = $productData['image_path'];
 
     // Calculate subtotal for this product
     $subtotal = (float)$price * (int)$quantity;
-     $subtotals[] = $subtotal; // Store subtotal in the array
+    $subtotals[] = $subtotal; // Store subtotal in the array
 ?>
-<div class="order-item">
-<img src="../uploaded_img/<?= $image; ?>" alt="<?= $productName; ?>">
 
+<div class="order-item">
+    <img src="../uploaded_img/<?php echo $imagePath; ?>" alt="<?php echo $productName; ?>">
     <div class="product-details">
-        <h3><?= $productName; ?></h3>
-        <p>Price: KSh <?= $price; ?></p>
-        <p>Quantity: <?= $quantity; ?></p>
-        <p>Subtotal: KSh <?= number_format($subtotal, 2); ?></p>
+        <h3><?php echo $productName; ?></h3>
+        <p>Price: KSh <?php echo $price; ?></p>
+        <p>Quantity: <?php echo $quantity; ?></p>
+        <p>Subtotal: KSh <?php echo number_format($subtotal, 2); ?></p>
     </div>
 </div>
 <?php

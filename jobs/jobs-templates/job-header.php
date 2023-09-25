@@ -29,6 +29,15 @@
 
     <!-- Template Stylesheet -->
     <link href="../css/jobs.css" rel="stylesheet">
+    <link
+      href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css"
+    />
+
 </head>
 
 <body>

@@ -457,6 +457,7 @@ Hero Media Query
   max-width: 120rem;
   margin: 0 auto;
   padding: 0 2rem;
+ 
 }
 
 .product-item {
@@ -464,6 +465,7 @@ Hero Media Query
   width: 27rem;
   margin: 0 auto;
   margin-bottom: 3rem;
+  border-radius: 50px;
 }
 
 .product-thumb img {

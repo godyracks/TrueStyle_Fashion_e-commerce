@@ -1,5 +1,3 @@
-
-
 <?php
 //session_start();
 // Check if there is a cart message in the session
@@ -13,8 +11,11 @@ $itemsPerPage = 8;
 $currentPage = isset($_GET['page']) && is_numeric($_GET['page']) ? $_GET['page'] : 1;
 $offset = ($currentPage - 1) * $itemsPerPage;
 
-// Query to fetch limited products with LIMIT and OFFSET
-$query = "SELECT * FROM products LIMIT $offset, $itemsPerPage";
+// Query to fetch limited products with LIMIT and OFFSET, including the image column
+$query = "SELECT p.*, pi.image_path FROM products p
+          LEFT JOIN product_images pi ON p.id = pi.product_id
+          GROUP BY p.id
+          LIMIT $offset, $itemsPerPage";
 $select_product = mysqli_query($conn, $query) or die('Query failed');
 ?>
 <style>
@@ -36,8 +37,6 @@ $select_product = mysqli_query($conn, $query) or die('Query failed');
     background-color: #666;
     color: #fff;
 }
-
-
 </style>
 
 <section class="section all-products" id="products">
@@ -62,7 +61,7 @@ $select_product = mysqli_query($conn, $query) or die('Query failed');
                 <div class="product-item">
                     <div class="overlay">
                         <a href="../details/?id=<?php echo $product['id']; ?>" class="product-thumb">
-                            <img src="../uploaded_img/<?php echo $product['image']; ?>" alt="" />
+                            <img src="../uploaded_img/<?php echo $product['image_path']; ?>" alt="" />
                         </a>
                         <?php if (!empty($product['discount'])) { ?>
                                 <span class="discount"><?php echo $product['discount']; ?>%</span>

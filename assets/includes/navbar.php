@@ -1,7 +1,32 @@
 <?php //session_start();
-$user_id = $_SESSION['SESSION_EMAIL'];
+//$user_id = $_SESSION['SESSION_EMAIL'];
 ?>
   <style>
+        /* Style for the parent container */
+        .logo-container {
+  display: flex;
+  align-items: center; /* Center vertically */
+  width: 200px;
+}
+
+/* Style for the logo */
+.child_1 {
+  width: 140px; /* Adjust the width as needed */
+  margin-right: 1px; /* Add spacing between logo and name */
+}
+
+.child_2 {
+  width: 50px; /* Adjust the width as needed */
+  margin-right: 1px; /* Add spacing between logo and name */
+}
+#logo-image{
+  height: 70px;
+  width: 70px;
+}
+.name{
+    font-size: 12px;
+}
+ 
          /* Add this CSS to your existing stylesheet */
 /* Style the shop container */
 .product-container {
@@ -119,6 +144,12 @@ $user_id = $_SESSION['SESSION_EMAIL'];
   transform: rotate(90deg); /* Pointing right */
   transition: transform 0.3s ease;
 }
+/* CSS for desktop screens */
+@media only screen and (min-width: 769px) {
+  .mobile-only {
+    display: none; /* Hide the links on desktop screens */
+  }
+}
 
 /* Dropdown for Mobile */
 @media only screen and (max-width: 768px) {
@@ -148,6 +179,7 @@ $user_id = $_SESSION['SESSION_EMAIL'];
   }
    /* Style the service dropdown items on mobile */
    .service-dropdown a {
+      height: 40px; 
     padding: 0px 70px; /* Adjust padding as needed */
     text-align: left; /* Align text to the left */
   }
@@ -230,11 +262,11 @@ $user_id = $_SESSION['SESSION_EMAIL'];
     <i class="bx bx-chevron-right mobile-arrow"></i>
   </a>
   <div class="service-dropdown" id="serviceDropdown">
-    <a href="https://truestyle.co.ke/jobs/jobs-home">Jobs updates</a>
-    <a href="#">Advertisements</a>
-    <a href="https://truestyle.co.ke/modelling-agency">Modeling Agency</a>
-    <a href="https://truestyle.co.ke/events">TS EVENTS</a>
-    <a href="https://truestyle.co.ke/sacco">TS SACCO</a>
+    <!-- <a href="https://truestyle.co.ke/jobs/jobs-home">Jobs updates</a> -->
+    <!-- <a href="#">Advertisements</a> -->
+    <!-- <a href="https://truestyle.co.ke/modelling-agency">Modeling Agency</a> -->
+    <!-- <a href="https://truestyle.co.ke/events">TS EVENTS</a> -->
+    <!-- <a href="https://truestyle.co.ke/sacco">TS SACCO</a> -->
     <!-- Add more items as needed -->
   </div>
 </div>
@@ -403,4 +435,3 @@ function toggleServiceDropdown() {
 
 
   </script>
-

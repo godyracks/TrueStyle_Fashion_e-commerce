@@ -16,24 +16,30 @@ $offset = ($currentPage - 1) * $itemsPerPage;
 // Check if a product name is provided in the URL
 if (isset($_GET['name'])) {
     $productName = $_GET['name'];
-    
+
     // Modify the query to fetch products based on the selected category
-    $query = "SELECT * FROM products WHERE name LIKE '%$productName%' LIMIT $offset, $itemsPerPage";
+    $query = "SELECT products.*, product_images.image_path 
+              FROM products 
+              LEFT JOIN product_images ON products.id = product_images.product_id 
+              WHERE products.name LIKE '%$productName%' 
+              GROUP BY products.id 
+              LIMIT $offset, $itemsPerPage";
     $select_product = mysqli_query($conn, $query) or die('Query failed');
-    
+
     // Check if there are more products with the same name
-    $countQuery = "SELECT COUNT(*) AS total FROM products WHERE name LIKE '%$productName%'";
+    $countQuery = "SELECT COUNT(DISTINCT products.id) AS total 
+                   FROM products 
+                   LEFT JOIN product_images ON products.id = product_images.product_id 
+                   WHERE products.name LIKE '%$productName%'";
     $countResult = mysqli_query($conn, $countQuery);
     $totalProducts = mysqli_fetch_assoc($countResult)['total'];
     $totalPages = ceil($totalProducts / $itemsPerPage);
 
     if ($currentPage > $totalPages) {
         echo "No more '$productName' available.";
-      
         exit;
     }
 
-    
 } else {
     // Handle cases where the product name is not provided
     echo "Product name not provided.";
@@ -61,11 +67,11 @@ if (isset($_GET['name'])) {
         <?php
         if (mysqli_num_rows($select_product) > 0) {
             while ($product = mysqli_fetch_assoc($select_product)) {
-        ?>
-                 <div class="product-item">
+                ?>
+                <div class="product-item">
                     <div class="overlay">
                         <a href="../details/?id=<?php echo $product['id']; ?>" class="product-thumb">
-                            <img src="../uploaded_img/<?php echo $product['image']; ?>" alt="" />
+                            <img src="../uploaded_img/<?php echo $product['image_path']; ?>" alt="" />
                         </a>
                         <?php if (!empty($product['discount'])) { ?>
                             <span class="discount"><?php echo $product['discount']; ?>%</span>
@@ -91,7 +97,7 @@ if (isset($_GET['name'])) {
                         </li>
                     </ul>
                 </div>
-        <?php
+            <?php
             }
         } else {
             echo "No more '$productName' available.";

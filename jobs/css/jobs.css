@@ -151,17 +151,17 @@
 
 
 /*** Header ***/
-.header-carousel .container,
-.page-header .container {
+.header-carousel .container10,
+.page-header .container10 {
     position: relative;
     padding: 45px 0 45px 35px;
     border-left: 15px solid var(--primary);
 }
 
-.header-carousel .container::before,
-.header-carousel .container::after,
-.page-header .container::before,
-.page-header .container::after {
+.header-carousel .container10::before,
+.header-carousel .container10::after,
+.page-header .container10::before,
+.page-header .container10::after {
     position: absolute;
     content: "";
     top: 0;
@@ -169,10 +169,11 @@
     width: 100px;
     height: 15px;
     background: var(--primary);
+    font-size: 40px;
 }
 
-.header-carousel .container::after,
-.page-header .container::after {
+.header-carousel .container10::after,
+.page-header .container10::after {
     top: 100%;
     margin-top: -15px;
 }
@@ -222,7 +223,7 @@
     background: transparent;
     border: 1px solid #FFFFFF;
     border-radius: 2px;
-    font-size: 22px;
+    font-size: 30px;
     transition: .5s;
 }
 
@@ -289,6 +290,7 @@
 .testimonial-carousel .owl-item .testimonial-item,
 .testimonial-carousel .owl-item.center .testimonial-item * {
     transition: .5s;
+    font-size: 50px;
 }
 
 .testimonial-carousel .owl-item.center .testimonial-item {

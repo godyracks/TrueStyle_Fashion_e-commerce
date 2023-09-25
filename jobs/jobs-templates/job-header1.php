@@ -1,5 +1,5 @@
 
-<?php include_once('../assets/setup/db.php') ?>
+<?php include_once('../../assets/setup/db.php') ?>
 <?php
          // Fetch the cart count
             $cartCount = 0;
@@ -37,35 +37,9 @@
     <!-- Include CKEditor JavaScript -->
 <script src="../ckeditor/src/script.ts"></script>
     <!-- Custom StyleSheet -->
-    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../../css/styles.css" />
     <link rel="stylesheet" href="custom.css" />
     <title>True Style</title>
-    <style>
-
-/* Style for the parent container */
-.logo-container {
-  display: flex;
-  align-items: center; /* Center vertically */
-  width: 200px;
-}
-
-/* Style for the logo */
-.child_1 {
-  width: 60px; /* Adjust the width as needed */
-  margin-right: 1px; /* Add spacing between logo and name */
-}
-
-.child_2 {
-  width: 140px; /* Adjust the width as needed */
-  margin-right: 1px; /* Add spacing between logo and name */
-}
-#logo-image{
-  height: 50px;
-  width: 50px;
-}
-
-
-</style>
 
   </head>
 
@@ -83,19 +57,11 @@
     </div>
     <div class="navigation">
       <div class="nav-center container d-flex">
-           <div class="logo-container">
-                  <div class="child_1">
-                    <img src="../images/LOGO_OFF.png" alt="True Style Logo" id="logo-image"/>
-                  </div>
-                  <div class="child_2">
-                    <h1>True Style</h1>
-                  </div>
-          </div>
-
+        <a href="../../home" class="logo"><h1>True Style</h1></a>
 
         <ul class="nav-list d-flex">
           <li class="nav-item">
-            <a href="../home" class="nav-link">Home</a>
+            <a href="../../home" class="nav-link">Home</a>
           </li>
           <li class="nav-item">
             <a href="../product" class="nav-link">Shop</a>
@@ -175,7 +141,7 @@
 
     <!-- Search modal -->
    
-<?php include_once('../assets/templates/_search_modal.php');?>
+<?php //include_once('../assets/templates/_search_modal.php');?>
  <!-- Search Modal -->
 
 

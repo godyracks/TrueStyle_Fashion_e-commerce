@@ -1,90 +1,202 @@
-<?php include_once('../jobs-templates/job-header.php'); 
- ?>
-<!-- Header end -->
+<?php
+include_once('../jobs-templates/job-header.php');
 
-<!-- navbar start -->
-<?php include_once('../jobs-templates/job-navbar.php'); ?>
-<!--  navbar end-->
+// Include necessary files for database connection
+include_once('../../assets/setup/db.php');
+
+// Custom function to escape values
+function escapeValue($conn, $value) {
+    return mysqli_real_escape_string($conn, $value);
+}
+
+// Check if the form is submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get and sanitize form data
+    $jobName = escapeValue($conn, $_POST['job_name']);
+    $jobCategory = escapeValue($conn, $_POST['job_category']);
+    $jobLocation = escapeValue($conn, $_POST['job_location']);
+    $jobDescription = escapeValue($conn, $_POST['job_description']);
+
+    // Get and sanitize job responsibility key-value pairs
+    $responsibilityKeys = array_map('trim', $_POST['responsibility_key']);
+    $responsibilityValues = array_map('trim', $_POST['responsibility_value']);
+    $jobResponsibility = array_combine($responsibilityKeys, $responsibilityValues);
+    $jobResponsibilityJSON = json_encode($jobResponsibility);
+
+    // Get and sanitize job qualifications key-value pairs
+    $qualificationKeys = array_map('trim', $_POST['qualification_key']);
+    $qualificationValues = array_map('trim', $_POST['qualification_value']);
+    $jobQualifications = array_combine($qualificationKeys, $qualificationValues);
+    $jobQualificationsJSON = json_encode($jobQualifications);
+
+    $vacancyNumber = intval($_POST['vacancy_number']);
+    $jobNature = escapeValue($conn, $_POST['job_nature']);
+    $deadline = $_POST['deadline']; // Assuming date format is valid
+    $salaryRange = escapeValue($conn, $_POST['salary_range']);
+    $companyName = escapeValue($conn, $_POST['company_name']);
+    $postedDate = $_POST['posted_date']; // Assuming date format is valid
+    $jobPosterEmail = escapeValue($conn, $_POST['job_poster_email']);
+
+    // Prepare and execute the SQL query using prepared statements
+    $sql = "INSERT INTO guest_jobs (job_name, job_category, job_location, job_description, job_responsibility, job_qualifications, vacancy_number, job_nature, deadline, salary_range, company_name, posted_date, job_poster_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        $stmt->bind_param("ssssssiisssss", $jobName, $jobCategory, $jobLocation, $jobDescription, $jobResponsibilityJSON, $jobQualificationsJSON, $vacancyNumber, $jobNature, $deadline, $salaryRange, $companyName, $postedDate, $jobPosterEmail);
+        if ($stmt->execute()) {
+            echo "New job created successfully";
+        } else {
+            echo "Error: " . $stmt->error;
+        }
+        $stmt->close();
+    } else {
+        echo "Error preparing statement: " . $conn->error;
+    }
+}
+?>
+
+<style>
+    /* Base styles for larger screens */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+}
+
+form {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+label {
+    display: block;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+select,
+input[type="date"],
+input[type="email"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+select {
+    font-size: 16px;
+}
+
+input[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+/* Media query for screens less than 768px */
+@media (max-width: 768px) {
+    form {
+        padding: 10px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select,
+    input[type="date"],
+    input[type="email"] {
+        font-size: 14px;
+    }
+
+    input[type="submit"] {
+        font-size: 16px;
+    }
+}
+
+</style>
 
 
- <!-- Contact Start -->
- <div class="container-xxl py-5">
-            <div class="container">
-                <h1 class="text-center mb-5 wow fadeInUp" data-wow-delay="0.1s">Contact For Any Query</h1>
-                <div class="row g-4">
-                    <div class="col-12">
-                        <div class="row gy-4">
-                            <div class="col-md-4 wow fadeIn" data-wow-delay="0.1s">
-                                <div class="d-flex align-items-center bg-light rounded p-4">
-                                    <div class="bg-white border rounded d-flex flex-shrink-0 align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
-                                        <i class="fa fa-map-marker-alt text-primary"></i>
-                                    </div>
-                                    <span>Nakuru City, Nakuru County, Kenya.</span>
-                                </div>
-                            </div>
-                            <div class="col-md-4 wow fadeIn" data-wow-delay="0.3s">
-                                <div class="d-flex align-items-center bg-light rounded p-4">
-                                    <div class="bg-white border rounded d-flex flex-shrink-0 align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
-                                        <i class="fa fa-envelope-open text-primary"></i>
-                                    </div>
-                                    <span>info@truestye.com</span>
-                                </div>
-                            </div>
-                            <div class="col-md-4 wow fadeIn" data-wow-delay="0.5s">
-                                <div class="d-flex align-items-center bg-light rounded p-4">
-                                    <div class="bg-white border rounded d-flex flex-shrink-0 align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
-                                        <i class="fa fa-phone-alt text-primary"></i>
-                                    </div>
-                                    <span> +254 701 559 001</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127672.24677867795!2d36.078860399999996!3d-0.31581185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x18298d90cf610bef%3A0xf2f21833bc7cc21a!2sNakuru!5e0!3m2!1sen!2ske!4v1691916229187!5m2!1sen!2ske" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="wow fadeInUp" data-wow-delay="0.5s">
-                            <p class="mb-4">Lorem ipsum dolor, sit amet consectetur adipisicing elit
-                                Nequaperiam inventore, suscipit dolorem quae eius in omnis laboriosam consequuntur facilis consequatur! Obcaecati, placeat.
-                                  </a></p>
-                            <form>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="name" placeholder="Your Name">
-                                            <label for="name">Your Name</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="email" class="form-control" id="email" placeholder="Your Email">
-                                            <label for="email">Your Email</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="subject" placeholder="Subject">
-                                            <label for="subject">Subject</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-floating">
-                                            <textarea class="form-control" placeholder="Leave a message here" id="message" style="height: 150px"></textarea>
-                                            <label for="message">Message or Job details</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <button class="btn btn-primary w-100 py-3" type="submit">Send Message</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Contact End -->
+
+<h1>Create a New Job</h1>
+<form action="" method="post">
+    <label for="job_name">Job Name:</label>
+    <input type="text" id="job_name" name="job_name" required><br>
+    
+    <label for="job_category">Job Category:</label>
+    <input type="text" id="job_category" name="job_category"><br>
+    
+    <label for="job_location">Job Location:</label>
+    <input type="text" id="job_location" name="job_location"><br>
+    
+    <label for="job_description">Job Description:</label>
+    <textarea id="job_description" name="job_description"></textarea><br>
+    
+    <label for="job_responsibility">Job Responsibility:</label><br>
+    <input type="text" name="responsibility_key[]" placeholder="Key 1">
+    <input type="text" name="responsibility_value[]" placeholder="Value 1"><br>
+    
+    <input type="text" name="responsibility_key[]" placeholder="Key 2">
+    <input type="text" name="responsibility_value[]" placeholder="Value 2"><br>
+    
+    <input type="text" name="responsibility_key[]" placeholder="Key 3">
+    <input type="text" name="responsibility_value[]" placeholder="Value 3"><br>
+    
+    <label for="job_qualifications">Job Qualifications:</label><br>
+    <input type="text" name="qualification_key[]" placeholder="Key 1">
+    <input type="text" name="qualification_value[]" placeholder="Value 1"><br>
+    
+    <input type="text" name="qualification_key[]" placeholder="Key 2">
+    <input type="text" name="qualification_value[]" placeholder="Value 2"><br>
+    
+    <input type="text" name="qualification_key[]" placeholder="Key 3">
+    <input type="text" name="qualification_value[]" placeholder="Value 3"><br>
+    
+    <label for="vacancy_number">Vacancy Number:</label>
+    <input type="number" id="vacancy_number" name="vacancy_number"><br>
+    
+     <label for="job_nature">Job Nature:</label>
+    <select id="job_nature" name="job_nature" required>
+        <option value="Full Time">Full Time</option>
+        <option value="Part Time">Part Time</option>
+        <option value="Featured">Featured</option>
+    </select><br>
+    
+    <label for="deadline">Deadline:</label>
+    <input type="date" id="deadline" name="deadline"><br>
+    
+    <label for="salary_range">Salary Range:</label>
+    <input type="text" id="salary_range" name="salary_range"><br>
+    
+    <label for="company_name">Company Name:</label>
+    <input type="text" id="company_name" name="company_name" required><br>
+    
+    <label for="posted_date">Posted Date:</label>
+    <input type="date" id="posted_date" name="posted_date" required><br>
+    
+      <label for="job_poster_email">Job Poster Email:</label>
+    <input type="email" id="job_poster_email" name="job_poster_email" required><br>
+    
+    <input type="submit" value="Create Job">
+</form>
+
+
 
         <!-- Footer Start -->
      <?php

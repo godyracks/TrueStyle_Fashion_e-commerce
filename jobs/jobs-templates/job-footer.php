@@ -16,10 +16,11 @@
                         <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+254 701 559 001</p>
                         <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@truestye.com</p>
                         <div class="d-flex pt-2">
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
-                            <!-- <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a> -->
+                        <span><a href="https://www.facebook.com/wittymodels?mibextid=ZbWKwL"><i class='bx bxl-facebook-square bx-tada' style="font-size:40px;" ></i></a></span>
+          <span><a href="https://t.me/TrueStyleTelegram"><i class='bx bxl-telegram bx-tada' style='color:#080808; font-size: 40px;'></i></a>
+        </span>
+          <span><a href="https://chat.whatsapp.com/CUsmO3pajqs8oroOL6w7Ai"><i class='bx bxl-whatsapp bx-spin' style='color:#080808; font-size: 40px;' ></i></a></span>
+          <span><a href="https://www.tiktok.com/@truestyle.com?_t=8fEkQGsfUSk&_r=1"><i class='bx bxl-tiktok bx-tada bx-flip-horizontal' style="font-size:40px;" ></i></a></span>
                         </div>
                     </div>
                    
@@ -51,6 +52,7 @@
     </div>
 
     <!-- JavaScript Libraries -->
+
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../lib/wow/wow.min.js"></script>

@@ -20,35 +20,56 @@ if ($_SESSION['SESSION_EMAIL'] !== 'godfreymatagaro@gmail.com' && $_SESSION['SES
 
 $user_id = $_SESSION['SESSION_NAME'];
 
-if(isset($_POST['add_product'])){
+if (isset($_POST['add_product'])) {
    $p_name = $_POST['p_name'];
    $p_category = $_POST['p_category'];
    $p_description = $_POST['p_description'];
-    // Sanitize the HTML content (You might need to use a proper HTML sanitizer library)
-    $p_description = htmlspecialchars($p_description);
    $p_price = $_POST['p_price'];
-   $p_discount = $_POST['p_discount'];
-   $p_image = $_FILES['p_image']['name'];
-   $p_image_tmp_name = $_FILES['p_image']['tmp_name'];
-   $p_image_folder = '../uploaded_img/'.$p_image;
+   $p_discount = isset($_POST['p_discount']) ? $_POST['p_discount'] : 0;
    $p_featured = isset($_POST['p_featured']) ? 1 : 0;
 
-   $insert_query = mysqli_prepare($conn, "INSERT INTO `products` (name, category, description, price, discount, image, featured) VALUES (?, ?, ?, ?, ?, ?, ?)");
-   mysqli_stmt_bind_param($insert_query, "sssiisi", $p_name, $p_category, $p_description, $p_price, $p_discount, $p_image, $p_featured);
-  
-   mysqli_stmt_execute($insert_query);
+   // Sanitize the HTML content (You might need to use a proper HTML sanitizer library)
+   $p_description = htmlspecialchars($p_description);
 
+   // Upload and store the images
+   $imagePaths = [];
 
-   if($insert_query){
-      header('location:../admin/');
-      move_uploaded_file($p_image_tmp_name, $p_image_folder);
-      $message[] = 'product added successfully';
-      
-      
-   }else{
-      $message[] = 'could not add the product';
+   if (!empty($_FILES['p_images']['name'][0])) {
+       $targetDirectory = "../uploaded_img/"; // Specify your image upload directory
+
+       foreach ($_FILES['p_images']['tmp_name'] as $key => $tmp_name) {
+           $imageFile = $_FILES['p_images']['name'][$key];
+           $targetFilePath = $targetDirectory . $imageFile;
+
+           if (move_uploaded_file($tmp_name, $targetFilePath)) {
+               $imagePaths[] = $imageFile; // Store the image paths in an array
+           } else {
+               // Handle upload errors if needed
+           }
+       }
    }
-}
+    // Insert product details into the products table
+    $insert_query = mysqli_prepare($conn, "INSERT INTO `products` (name, category, description, price, discount, featured) VALUES (?, ?, ?, ?, ?, ?)");
+    mysqli_stmt_bind_param($insert_query, "sssdii", $p_name, $p_category, $p_description, $p_price, $p_discount, $p_featured);
+    mysqli_stmt_execute($insert_query);
+ 
+    // Get the last inserted product ID
+    $lastInsertedID = mysqli_insert_id($conn);
+ 
+    // Insert image paths into the product_images table
+    foreach ($imagePaths as $imagePath) {
+        $insertImageQuery = mysqli_prepare($conn, "INSERT INTO product_images (product_id, image_path) VALUES (?, ?)");
+        mysqli_stmt_bind_param($insertImageQuery, "is", $lastInsertedID, $imagePath);
+        mysqli_stmt_execute($insertImageQuery);
+    }
+ 
+    if ($insert_query && !empty($imagePaths)) {
+        header('location:../admin/');
+        $message[] = 'Product added successfully';
+    } else {
+        $message[] = 'Could not add the product';
+    }
+ }
 
 if(isset($_GET['delete'])){
    $delete_id = $_GET['delete'];
@@ -106,7 +127,8 @@ if(isset($message)){
    <div id="editor" name="p_description" required></div>
    <input type="number" name="p_price" min="0" placeholder="enter the product price" class="box" required>
    <input type="number" name="p_discount" min="0" placeholder="enter the product discount (optional)" class="box" >
-   <input type="file" name="p_image" accept="image/png, image/jpg, image/jpeg" class="box" required>
+   <input type="file" name="p_images[]" accept="image/png, image/jpg, image/jpeg" class="box" multiple required>
+   <!-- <input type="file" name="p_image" accept="image/png, image/jpg, image/jpeg" class="box" required> -->
    <input type="checkbox" name="p_featured" value="1"> Featured
 
    <input type="submit" value="add the product" name="add_product" class="btn">

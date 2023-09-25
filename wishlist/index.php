@@ -2,7 +2,7 @@
 
 <div class="container cart">
   <?php
-  session_start(); // Start the session
+ // session_start(); // Start the session
 
   $user_id = $_SESSION['SESSION_EMAIL'];
 
@@ -25,10 +25,15 @@
       $product_query = mysqli_query($conn, "SELECT * FROM `products` WHERE id = '$product_id'") or die('query failed');
       $product = mysqli_fetch_assoc($product_query);
 
+      // Fetch the image path from the product_images table
+      $image_query = mysqli_query($conn, "SELECT image_path FROM `product_images` WHERE product_id = '$product_id' LIMIT 1") or die('query failed');
+      $image_row = mysqli_fetch_assoc($image_query);
+      $image_path = $image_row['image_path'];
+
       echo '<tr>
               <td>
                 <div class="wishlist-info">
-                  <img src="../uploaded_img/' . $product['image'] . '" alt="" />
+                  <img src="../uploaded_img/' . $image_path . '" alt="" />
                   <div>
                     <p>' . $product['name'] . '</p>
                     <span>Price: KES ' . $product['price'] . '/-</span><br />

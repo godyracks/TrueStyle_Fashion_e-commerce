@@ -158,6 +158,31 @@ if ($stmt) {
 }
 
 
+        /* Style for the social media icons */
+        .social-icons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .social-icon {
+            width: 30px;
+            height: 30px;
+            /* background-color: #3498db; */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            text-decoration: none;
+            color: #fff;
+            font-size: 18px;
+        }
+
+        /* Style for the contact details */
+        .contact-details p {
+            margin: 5px 0;
+        }
+
+
 
 
         /* Add some responsive styles */
@@ -195,12 +220,25 @@ if ($stmt) {
                 </div>
             </div>
             <div class="child1-container">
-                <!-- Instagram Embed -->
+           <!-- Instagram Embed -->
                 <div class="instagram-embed">
-    <!-- Paste Instagram's generated embed code here -->
+                    <!-- Social Media Icons -->
+                    <div class="social-icons">
+                        <a href="#" class="social-icon">
+                            <img src="instagram.svg" alt="Instagram" width="30px;" height="30px;">
+                        </a>
+                        <a href="#" class="social-icon" >
+                            <img src="x.svg" alt="Twitter" width="25px;" height="25px;">
+                        </a>
+                     
+                    </div>
 
-
-</div>
+                    <!-- Contact Details -->
+                    <div class="contact-details">
+                        <p>Email: example@example.com</p>
+                        <p>Phone: +123456789</p>
+                    </div>
+                </div>
 </div>
 
             </div>
