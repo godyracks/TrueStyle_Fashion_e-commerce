@@ -88,7 +88,7 @@ if (isset($_GET['name'])) {
                         <li><i class="bx bx-heart"></i></li>
                         <li><i class="bx bx-search"></i></li>
                         <li>
-                            <form method="post" action="../cart/add-to-cart.php">
+                            <form method="post" action="../cart/add_to_cart.php">
                                 <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
                                 <input type="hidden" name="id" value="<?php echo $product['id']; ?>">
                                 <input type="hidden" name="quantity" value="1"> <!-- You can adjust the quantity as needed -->

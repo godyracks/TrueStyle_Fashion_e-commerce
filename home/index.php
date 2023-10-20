@@ -3,8 +3,8 @@
 <br />
 <br />
 <br />
-<?php include_once('../assets/templates/_new-collection.php') ?>  
-<?php include_once('../assets/templates/_categories.php') ?> 
+<?php //include_once('../assets/templates/_new-collection.php') ?>  
+<?php //include_once('../assets/templates/_categories.php') ?> 
 <?php include_once('../assets/templates/_new-arrivals.php') ?>  
 <?php include_once('../assets/templates/_promo-banner.php') ?>  
 <?php include_once('../assets/templates/_featured-products.php') ?>  

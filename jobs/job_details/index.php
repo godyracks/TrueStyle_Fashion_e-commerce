@@ -279,9 +279,14 @@ if (isset($_GET['id'])) {
                             <p><i class="fa fa-angle-right text-primary me-2"></i>Location: <?php echo $row['job_location'] ?></p>
                             <p class="m-0"><i class="fa fa-angle-right text-primary me-2"></i>Deadline: <?php echo $row['deadline'] ?></p>
                         </div>
+                        <div class="bg-light rounded p-5 mb-4 wow slideInUp" data-wow-delay="0.1s">
+    <h4 class="mb-4">Job Poster</h4>
+    <img src="../../images/driver.jpg" alt="Job Poster Image" class="img-fluid">
+</div>
+
                         <div class="bg-light rounded p-5 wow slideInUp" data-wow-delay="0.1s">
                             <h4 class="mb-4">Company Detail</h4>
-                            <p class="m-0">No details found.</p>
+                            <p class="m-0">Company Name: <?php echo $row['company_name'] ?></p>
                         </div>
                     </div>
                 </div>

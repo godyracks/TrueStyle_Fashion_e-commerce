@@ -37,23 +37,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $postedDate = $_POST['posted_date']; // Assuming date format is valid
     $jobPosterEmail = escapeValue($conn, $_POST['job_poster_email']);
 
-    // Prepare and execute the SQL query using prepared statements
-    $sql = "INSERT INTO guest_jobs (job_name, job_category, job_location, job_description, job_responsibility, job_qualifications, vacancy_number, job_nature, deadline, salary_range, company_name, posted_date, job_poster_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    // Check if a file was uploaded
+    if (isset($_FILES['job_poster_image']) && $_FILES['job_poster_image']['error'] === UPLOAD_ERR_OK) {
+        $tempFile = $_FILES['job_poster_image']['tmp_name'];
+        $imageFileName = $_FILES['job_poster_image']['name'];
+        $targetDirectory = 'job_imgs/';
+        $targetFile = $targetDirectory . $imageFileName;
 
-    $stmt = $conn->prepare($sql);
-    if ($stmt) {
-        $stmt->bind_param("ssssssiisssss", $jobName, $jobCategory, $jobLocation, $jobDescription, $jobResponsibilityJSON, $jobQualificationsJSON, $vacancyNumber, $jobNature, $deadline, $salaryRange, $companyName, $postedDate, $jobPosterEmail);
-        if ($stmt->execute()) {
-            echo "New job created successfully";
-        } else {
-            echo "Error: " . $stmt->error;
-        }
-        $stmt->close();
+// Move the uploaded image to the target directory
+if (move_uploaded_file($tempFile, $targetFile)) {
+    echo "Job poster image uploaded successfully.";
+
+    // Prepare and execute the SQL query to insert job details into the database
+    $stmt = $conn->prepare("INSERT INTO jobs (job_name, job_category, job_location, job_description, job_responsibility, job_qualifications, vacancy_number, job_nature, deadline, salary_range, company_name, posted_date, job_poster_email, job_poster_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssssisssssss", $jobName, $jobCategory, $jobLocation, $jobDescription, $jobResponsibilityJSON, $jobQualificationsJSON, $vacancyNumber, $jobNature, $deadline, $salaryRange, $companyName, $postedDate, $jobPosterEmail, $targetFile); // Use $targetFile here
+    if ($stmt->execute()) {
+        echo "New job created successfully";
     } else {
-        echo "Error preparing statement: " . $conn->error;
+        echo "Error: " . $stmt->error;
     }
+} else {
+    echo "Error uploading job poster image.";
+}
+
+
+    } else {
+        echo "No file uploaded.";
+    }
+
+
 }
 ?>
+
 
 <style>
     /* Base styles for larger screens */
@@ -192,6 +207,10 @@ input[type="submit"] {
     
     <label for="job_poster_email">Your Email:</label>
     <input type="email" id="job_poster_email" name="job_poster_email" required><br>
+
+    <label for="job_poster_image">Job Poster Image (Upload):</label>
+    <input type="file" name="job_poster_image" accept="image/png, image/jpg, image/jpeg"><br>
+
     
     <input type="submit" value="Create Job">
 </form>

@@ -55,7 +55,6 @@ CREATE TABLE `products` (
   `id` int(100) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `price` decimal(10, 2) NOT NULL,
-  `image` varchar(100) NOT NULL,
   `category` varchar(100) NOT NULL,
   `description` text NOT NULL,
   PRIMARY KEY (`id`)
