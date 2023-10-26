@@ -34,18 +34,27 @@ if (isset($_POST['submit'])) {
 
                 if (password_verify($password, $hashed_password_db)) {
                     if ($row['is_verified'] == 1) {
-                        $adminEmails = array('godfreymatagaro@gmail.com', 'gmatagaro4@gmail.com', 'yetanotheradmin@example.com');
-                
+                        $adminEmails = array('godfreymatagaro5@gmail.com', 'gmatagaro45@gmail.com', 'yetanotheradmin@example.com');
+                    
                         if (in_array($email, $adminEmails)) {
+                            // Check if the user is an admin (you can extend this logic for more roles if needed)
                             $_SESSION['SESSION_EMAIL'] = $email;
                             $_SESSION['SESSION_NAME'] = $row['name'];
                             header("Location:../admin");
                             die();
                         } else {
-                            $_SESSION['SESSION_EMAIL'] = $email;
-                            $_SESSION['SESSION_NAME'] = $row['name'];
-                            header("Location:../user-profile");
-                            die();
+                            if ($row['user_type'] === 'agent') {
+                                // Check if the user is an agent
+                                $_SESSION['SESSION_EMAIL'] = $email;
+                                $_SESSION['SESSION_NAME'] = $row['name'];
+                                header("Location:../agent-profile");
+                                die();
+                            } else {
+                                $_SESSION['SESSION_EMAIL'] = $email;
+                                $_SESSION['SESSION_NAME'] = $row['name'];
+                                header("Location:../user-profile");
+                                die();
+                            }
                         }
                     } else {
                         $msg = "Your email is not verified yet. Please check your inbox for the verification link.";

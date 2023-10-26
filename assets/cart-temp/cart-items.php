@@ -1,3 +1,58 @@
+<style>
+.total-price {
+    text-align: center;
+}
+.option-btn {
+    margin: 5px;
+    padding: 5px 5px;
+    background-color: #28a745; 
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.option-btn:hover {
+    background-color: #218838;
+}
+.delete-btn {
+    margin: 5px;
+    padding: 5px 10px;
+    background-color: #964B00; 
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.delete-btn:hover {
+    background-color: #c82333; 
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.total-price {
+    text-align: center;
+}
+</style>
+
 <div class="container cart">
   <?php
   // Start or resume the session
@@ -45,7 +100,8 @@
   }
 
   // Retrieve items from the user's cart if logged in
-  $select_cart = mysqli_query($conn, "SELECT cart.*, products.price, products.name FROM `cart` JOIN `products` ON cart.product_id = products.id WHERE cart.user_id = '$user_id'") or die('query failed');
+  $select_cart = mysqli_query($conn, "SELECT cart.*, products.price, products.name, cart.size FROM `cart` JOIN `products` ON cart.product_id = products.id WHERE cart.user_id = '$user_id'") or die('query failed');
+
   $grand_total = 0;
 
   // Check if there are items in the user's cart
@@ -55,47 +111,35 @@
               <th>Product</th>
               <th>Quantity</th>
               <th>Subtotal</th>
-              <th>Action</th>
+             
             </tr>';
-    while ($fetch_cart = mysqli_fetch_assoc($select_cart)) {
-      $product_image = fetchProductImage($conn, $fetch_cart['product_id']);
-      $sub_total = (float)$fetch_cart['price'] * (int)$fetch_cart['quantity'];
-      $grand_total += $sub_total;
-      echo '<tr>
-              <td>
-                <div class="cart-info">
-                  <img src="../uploaded_img/' . $product_image . '" alt="" />
-                  <div>
-                    <p>' . $fetch_cart['name'] . '</p>
-                    <span>Price: KES ' . $fetch_cart['price'] . '/-</span> <br />
-                    <a href="../cart/add-to-cart.php?remove=' . $fetch_cart['id'] . '" class="delete-btn" onclick="return confirm(\'Remove item from cart?\');">Remove</a>
-                  </div>
-                </div>
-              </td>
-              <td>
-              <form action="" method="post">
-                <input type="hidden" name="update_quantity_id" value="' . $fetch_cart['id'] . '">
-                <select name="update_quantity">
-                  <?php
-                  // Generate options for quantities from 1 to 10
-                  for ($i = 1; $i <= 10; $i++) {
-                    $selected = ($i == $fetch_cart["quantity"]) ? "selected" : ';
-                    echo '<option value="' . $i . '" ' . $selected . '>' . $i . '</option>';
-                  }
-                  ?>
-                </select>
-                <input type="submit" value="Update" name="update_update_btn" class="option-btn">
-              </form>
-            </td>
+            while ($fetch_cart = mysqli_fetch_assoc($select_cart)) {
+              $product_image = fetchProductImage($conn, $fetch_cart['product_id']);
+              $sub_total = (float)$fetch_cart['price'] * (int)$fetch_cart['quantity'];
+              $grand_total += $sub_total;
+              echo '<tr>
+                      <td>
+                        <div class="cart-info">
+                          <img src="../uploaded_img/' . $product_image . '" alt="" />
+                          <div>
+                            <p>' . $fetch_cart['name'] . '</p>
+                            <span>Price: KES ' . $fetch_cart['price'] . '/-</span> <br />
+                            <span>Size: ' . $fetch_cart['size'] . '</span> <br />
+                            <a href="../cart/add-to-cart.php?remove=' . $fetch_cart['id'] . '" class="delete-btn" onclick="return confirm(\'Remove item from cart?\');">Remove</a>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <form action="" method="post">
+                          <input type="hidden" name="update_quantity_id"  value="' . $fetch_cart['id'] . '" >
+                          <input type="number" name="update_quantity" min="1"  value="' . $fetch_cart['quantity'] . '" >
+                          <input type="submit" value="update" name="update_update_btn" class="option-btn">
+                        </form>
+                      </td>
+                      <td>KES ' . $sub_total . '/-</td>
+                    </tr>';
+            }
             
-  
-  
-              <td>KES ' . $sub_total . '/-</td>
-              <td>
-                <a href="../cart/add-to-cart.php?remove=' . $fetch_cart['id'] . '" class="delete-btn" onclick="return confirm(\'Remove item from cart?\');">Remove</a>
-              </td>
-            </tr>';
-    }
     echo '</table>';
   }
 
@@ -111,7 +155,7 @@
                 <th>Product</th>
                 <th>Quantity</th>
                 <th>Subtotal</th>
-                <th>Action</th>
+                
               </tr>';
       while ($fetch_guest_cart = mysqli_fetch_assoc($select_guest_cart)) {
         $product_image = fetchProductImage($conn, $fetch_guest_cart['product_id']);
@@ -122,7 +166,7 @@
                   <div class="cart-info">
                     <img src="../uploaded_img/' . $product_image . '" alt="" />
                     <div>
-                      <p>' . $fetch_guest_cart['name'] . '</p>
+                      <p>' . $fetch_guest_cart['name'] . '
                       <span>Price: KES ' . $fetch_guest_cart['price'] . '/-</span>
                       <a href="../cart/add-to-cart.php?remove=' . $fetch_guest_cart['guest_id'] . '" class="delete-btn" onclick="return confirm(\'Remove item from cart?\');">Remove</a>
                     </div>
@@ -136,9 +180,7 @@
                   </form>
                 </td>
                 <td>KES ' . $sub_total . '/-</td>
-                <td>
-     
-                </td>
+                
               </tr>';
       }
       echo '</table>';
@@ -165,4 +207,4 @@
     }
     ?>
   </div>
-  </div>
+</div>

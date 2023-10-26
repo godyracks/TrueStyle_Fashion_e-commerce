@@ -11,6 +11,22 @@ CREATE TABLE `user_info` (
   UNIQUE KEY `email_UNIQUE` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- AGENTS TABLE
+CREATE TABLE agent_activity (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT, -- Foreign key reference to the agent's user_id
+    deposit DECIMAL(10, 2),
+    withdraw DECIMAL(10, 2),
+    testimony TEXT,
+    transactions INT,
+    investments DECIMAL(10, 2),
+    total_earned DECIMAL(10, 2),
+    referral_list TEXT,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+ALTER TABLE agent_activity ADD COLUMN pin VARCHAR(255);
+
+
 --TOKENS TBL--
 
 CREATE TABLE `auth_tokens` (
@@ -42,6 +58,10 @@ CREATE TABLE `cart` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4
 
+ALTER TABLE cart
+ADD COLUMN size VARCHAR(50);  -- You can adjust the data type and length as needed
+
+
 CREATE TABLE guest_cart (
     guest_id INT AUTO_INCREMENT PRIMARY KEY,
     session_id VARCHAR(255) NOT NULL, -- Identifies the guest's session
@@ -50,6 +70,10 @@ CREATE TABLE guest_cart (
     timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (product_id) REFERENCES products(id)
 );
+
+ALTER TABLE guest_cart
+ADD COLUMN size VARCHAR(50);  -- You can adjust the data type and length as needed
+
 
 CREATE TABLE `products` (
   `id` int(100) NOT NULL AUTO_INCREMENT,
@@ -62,6 +86,8 @@ CREATE TABLE `products` (
 
 ALTER TABLE `products`
 ADD COLUMN `discount` decimal(10, 2) DEFAULT NULL AFTER `price`;
+ALTER TABLE products ADD COLUMN size VARCHAR(255);
+
 
 
 

@@ -27,6 +27,7 @@ if (isset($_POST['add_product'])) {
    $p_price = $_POST['p_price'];
    $p_discount = isset($_POST['p_discount']) ? $_POST['p_discount'] : 0;
    $p_featured = isset($_POST['p_featured']) ? 1 : 0;
+   $p_sizes = isset($_POST['p_sizes']) ? $_POST['p_sizes'] : "";
 
    // Sanitize the HTML content (You might need to use a proper HTML sanitizer library)
    $p_description = htmlspecialchars($p_description);
@@ -49,8 +50,8 @@ if (isset($_POST['add_product'])) {
        }
    }
     // Insert product details into the products table
-    $insert_query = mysqli_prepare($conn, "INSERT INTO `products` (name, category, description, price, discount, featured) VALUES (?, ?, ?, ?, ?, ?)");
-    mysqli_stmt_bind_param($insert_query, "sssdii", $p_name, $p_category, $p_description, $p_price, $p_discount, $p_featured);
+    $insert_query = mysqli_prepare($conn, "INSERT INTO `products` (name, category, description, price, discount, featured, size) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    mysqli_stmt_bind_param($insert_query, "sssdiis", $p_name, $p_category, $p_description, $p_price, $p_discount, $p_featured, $p_sizes);
     mysqli_stmt_execute($insert_query);
  
     // Get the last inserted product ID
@@ -157,7 +158,7 @@ if(isset($message)){
    <input type="number" name="p_price" min="0" placeholder="enter the product price" class="box" required>
    <input type="number" name="p_discount" min="0" placeholder="enter the product discount (optional)" class="box" >
    <input type="file" name="p_images[]" accept="image/png, image/jpg, image/jpeg" class="box" multiple required>
-   <!-- <input type="file" name="p_image" accept="image/png, image/jpg, image/jpeg" class="box" required> -->
+   <input type="text" name="p_sizes" placeholder="Enter available sizes separated by commas (e.g. S, M, L, XL)" class="box" required>
    <input type="checkbox" name="p_featured" value="1"> Featured
 
    <input type="submit" value="add the product" name="add_product" class="btn">

@@ -87,9 +87,9 @@
                   <div class="child_1">
                     <img src="../images/LOGO_OFF.png" alt="True Style Logo" id="logo-image"/>
                   </div>
-                  <div class="child_2">
+                  <!-- <div class="child_2">
                     <h1>True Style</h1>
-                  </div>
+                  </div> -->
           </div>
 
 

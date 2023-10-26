@@ -19,6 +19,21 @@ $productID = isset($_GET['id']) ? $_GET['id'] : null;
 $query = "SELECT * FROM products WHERE id = $productID";
 $select_product = mysqli_query($conn, $query) or die('Query failed');
 
+// Query to fetch sizes from the 'size' column of the specific product
+$querySizes = "SELECT size FROM products WHERE id = ?";
+$stmtSizes = mysqli_prepare($conn, $querySizes);
+mysqli_stmt_bind_param($stmtSizes, "i", $productID);
+mysqli_stmt_execute($stmtSizes);
+$resultSizes = mysqli_stmt_get_result($stmtSizes);
+
+$sizes = []; // Initialize an array to store available sizes
+
+if (mysqli_num_rows($resultSizes) > 0) {
+    $sizeRow = mysqli_fetch_assoc($resultSizes);
+    $sizes = explode(',', $sizeRow['size']); // Split sizes by comma
+}
+
+
 // Check if the product exists
 if (mysqli_num_rows($select_product) > 0) {
     $product = mysqli_fetch_assoc($select_product);
@@ -105,23 +120,30 @@ if (mysqli_num_rows($resultImages) > 0) {
             <span><?php echo $product['category']; ?></span>
             <h1><?php echo $product['name']; ?></h1>
             <div class="price">KES <?php echo $product['price']; ?></div>
-            <form>
-                <div>
-                    <select>
-                        <option value="Select Size" selected disabled>Select Size</option>
-                        <option value="1">32</option>
-                        <option value="2">42</option>
-                        <option value="3">52</option>
-                        <option value="4">62</option>
-                    </select>
-                    <span><i class="bx bx-chevron-down"></i></span>
-                </div>
-            </form>
+
             <form class="form" method="POST" action="../cart/add-to-cart.php">
+                <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+                <input type="hidden" name="quantity" value="1"> <!-- You can adjust the quantity as needed -->
+                <select name="selected_size"> <!-- Add a select input for size selection -->
+                    <option value="" selected disabled>Select Size</option>
+                    <?php
+                    foreach ($sizes as $size) {
+                        echo '<option value="' . $size . '">' . $size . '</option>';
+                    }
+                    ?>
+                </select>
+                <br>
+                <br>
+                <button type="submit" class="addCart" name="add_to_cart">Add To Cart</button>
+</form>
+
+
+
+            <!-- <form class="form" method="POST" action="../cart/add-to-cart.php">
                 <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
                 <input type="text" name="quantity" placeholder="1" value="1" hidden/>
                 <button type="submit" class="addCart" name="add_to_cart">Add To Cart</button>
-            </form>
+            </form> -->
             <h3>Product Details</h3>
             <p><?php echo $product['description']; ?></p>
         </div>

@@ -15,6 +15,7 @@ if (isset($_SESSION['SESSION_EMAIL'])) {
 if (isset($_POST['add_to_cart'])) {
     $productID = $_POST['product_id'];
     $quantity = $_POST['quantity'];
+    $selectedSize = $_POST['selected_size'];
 
     // Retrieve product details from the database based on product ID
     $query = "SELECT * FROM products WHERE id = $productID";
@@ -25,8 +26,8 @@ if (isset($_POST['add_to_cart'])) {
 
         // Check if the user is logged in
         if ($user_id) {
-            // Check if the product is already in the cart
-            $check_query = "SELECT * FROM cart WHERE user_id = '$user_id' AND product_id = $productID";
+            // Check if the product with the selected size is already in the cart
+            $check_query = "SELECT * FROM cart WHERE user_id = '$user_id' AND product_id = $productID AND size = '$selectedSize'";
             $check_result = mysqli_query($conn, $check_query);
 
             if ($check_result && mysqli_num_rows($check_result) > 0) {
@@ -34,15 +35,15 @@ if (isset($_POST['add_to_cart'])) {
                 $existing_cart_item = mysqli_fetch_assoc($check_result);
                 $new_quantity = $existing_cart_item['quantity'] + $quantity;
 
-                // Update the quantity in the cart table
-                $update_query = "UPDATE cart SET quantity = $new_quantity WHERE user_id = '$user_id' AND product_id = $productID";
-                mysqli_query($conn, $update_query) or die('Query failed');
+                 // Update the quantity in the cart table
+                 $update_query = "UPDATE cart SET quantity = $new_quantity WHERE user_id = '$user_id' AND product_id = $productID AND size = '$selectedSize'";
+                 mysqli_query($conn, $update_query) or die('Query failed');
 
                 $_SESSION['cart_message'] = 'Product quantity updated in cart.';
                 $_SESSION['cart_message_class'] = 'success';
             } else {
-                // Insert the product into the cart table
-                $insert_query = "INSERT INTO cart (user_id, product_id, quantity) VALUES ('$user_id', $productID, $quantity)";
+                // Insert the product with the selected size into the cart table
+                $insert_query = "INSERT INTO cart (user_id, product_id, quantity, size) VALUES ('$user_id', $productID, $quantity, '$selectedSize')";
                 mysqli_query($conn, $insert_query) or die('Query failed');
 
                 $_SESSION['cart_message'] = 'Product added to cart.';
@@ -52,9 +53,9 @@ if (isset($_POST['add_to_cart'])) {
             // User is not logged in, insert into the guest cart
             $session_id = session_id(); // Use PHP's session_id() as a unique identifier
 
-            // Check if the product is already in the guest cart
-            $check_query = "SELECT * FROM guest_cart WHERE session_id = '$session_id' AND product_id = $productID";
-            $check_result = mysqli_query($conn, $check_query);
+           // Check if the product with the selected size is already in the guest cart
+           $check_query = "SELECT * FROM guest_cart WHERE session_id = '$session_id' AND product_id = $productID AND size = '$selectedSize'";
+           $check_result = mysqli_query($conn, $check_query);
 
             if ($check_result && mysqli_num_rows($check_result) > 0) {
                 // Product already exists in the guest cart, update the quantity
@@ -62,15 +63,15 @@ if (isset($_POST['add_to_cart'])) {
                 $new_quantity = $existing_cart_item['quantity'] + $quantity;
 
                 // Update the quantity in the guest cart table
-                $update_query = "UPDATE guest_cart SET quantity = $new_quantity WHERE session_id = '$session_id' AND product_id = $productID";
+                $update_query = "UPDATE guest_cart SET quantity = $new_quantity WHERE session_id = '$session_id' AND product_id = $productID AND size = '$selectedSize'";
                 mysqli_query($conn, $update_query) or die('Query failed');
 
                 $_SESSION['cart_message'] = 'Product quantity updated in cart.';
                 $_SESSION['cart_message_class'] = 'success';
             } else {
-                // Insert the product into the guest cart table
-                $insert_query = "INSERT INTO guest_cart (session_id, product_id, quantity) VALUES ('$session_id', $productID, $quantity)";
-                mysqli_query($conn, $insert_query) or die('Query failed');
+              // Insert the product with the selected size into the guest cart table
+              $insert_query = "INSERT INTO guest_cart (session_id, product_id, quantity, size) VALUES ('$session_id', $productID, $quantity, '$selectedSize')";
+              mysqli_query($conn, $insert_query) or die('Query failed');
 
                 $_SESSION['cart_message'] = 'Product added to cart.';
                 $_SESSION['cart_message_class'] = 'success';

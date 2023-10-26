@@ -43,6 +43,16 @@ if (isset($_POST['submit'])) {
 
                 if ($stmt->execute()) {
                     $user_id = $stmt->insert_id; // Get the last inserted user ID
+                     // Insert a record into the agent_activity table
+    $activity_sql = "INSERT INTO agent_activity (user_id, deposit, withdraw, testimony, transactions, investments, total_earned, referral_list) VALUES (?, 0, 0, 0, 0, 0, 0, '')";
+    $activity_stmt = $conn->prepare($activity_sql);
+    $activity_stmt->bind_param("i", $email);
+    if ($activity_stmt->execute()) {
+        // Agent's activity record successfully inserted
+        // You can add additional logic or a success message here if needed
+    } else {
+        $msg = "<div class='alert alert-danger'>Something went wrong while inserting agent activity record.</div>";
+    }
 
                     $token = bin2hex(random_bytes(16)); // Generate a random token
                     $token_sql = "INSERT INTO auth_tokens (user_id, token) VALUES (?, ?)";
@@ -158,7 +168,7 @@ if (isset($_POST['submit'])) {
                 <select name="user-type" class="agent-select" required>
                     <option value="user">Not Sure</option>
                     <option value="agent">Yes</option>
-                    <option value="user">No</option>
+                    
                 </select>
 
 
