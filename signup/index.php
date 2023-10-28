@@ -66,7 +66,7 @@ if (isset($_POST['submit'])) {
 
                             // Recipients
                             $mail->setFrom('godfreymatagaro@gmail.com', 'Mailer');
-                            $mail->addAddress($email);
+                        $mail->addAddress($email);
 
                             // Content
                             $mail->isHTML(true);

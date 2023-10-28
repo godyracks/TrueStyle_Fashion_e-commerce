@@ -7,9 +7,9 @@ use PHPMailer\PHPMailer\Exception;
 
 require '../../vendor/autoload.php';
 
-$user_id = $_SESSION['SESSION_EMAIL'];
+$user_email = $_SESSION['SESSION_EMAIL'];
 
-if (!isset($user_id)) {
+if (!isset($user_email)) {
     header('location:../../login');
     exit;
 }
@@ -19,7 +19,7 @@ include_once('../../assets/setup/db.php');
 
 $query = "SELECT pin FROM agent_activity WHERE user_id = ?";
 $stmt = mysqli_prepare($conn, $query);
-mysqli_stmt_bind_param($stmt, "s", $user_id);
+mysqli_stmt_bind_param($stmt, "s", $user_email); // Change user_id to user_email
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 $row = mysqli_fetch_assoc($result);
@@ -28,6 +28,9 @@ if (!$row || empty($row['pin'])) {
     header('location: set_pin.php');
     exit;
 }
+
+// Create the $mail object
+$mail = new PHPMailer(true);
 
 // Handle withdrawal form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -39,13 +42,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $insertStmt = mysqli_prepare($conn, $insertQuery);
 
     if ($insertStmt) {
-        mysqli_stmt_bind_param($insertStmt, "ssd", $user_id, $mpesa_number, $amount_withdrawn);
+        mysqli_stmt_bind_param($insertStmt, "ssd", $user_email, $mpesa_number, $amount_withdrawn);
         mysqli_stmt_execute($insertStmt);
 
         // Send an email notification
         try {
             // Server settings
-            $mail->SMTPDebug = SMTP::DEBUG_OFF;
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
@@ -56,11 +58,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Recipients
             $mail->setFrom('godfreymatagaro@gmail.com', 'Mailer');
-            $mail->addAddress($user_id);
+            $mail->addAddress($user_email); // Send the email to the user's email
 
             $mail->isHTML(true);
             $mail->Subject = 'Withdrawal Request';
-            $mail->Body = "Withdrawal request from user $user_id. Amount: $amount_withdrawn.";
+            $mail->Body = "Withdrawal request from user $user_email. Amount: $amount_withdrawn.";
 
             $mail->send();
             // Email sent successfully
@@ -71,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 
 
 

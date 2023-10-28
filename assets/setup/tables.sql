@@ -37,6 +37,9 @@ CREATE TABLE withdrawal_requests (
     status ENUM('Pending', 'Completed', 'Rejected') DEFAULT 'Pending'
 );
 
+ALTER TABLE agent_activity MODIFY COLUMN user_id VARCHAR(255);
+
+
 
 
 --TOKENS TBL--
