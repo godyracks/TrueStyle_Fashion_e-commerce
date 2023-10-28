@@ -13,6 +13,7 @@
 <?php //include_once('../assets/templates/_popup.php') ?>  
 <?php include_once('../assets/templates/cart_button.php') ?> 
 <?php include_once('../assets/includes/footer.php') ?>
+<?php include_once('../assets/templates/_sticky_bottomnav.php') ?> 
 
 
    

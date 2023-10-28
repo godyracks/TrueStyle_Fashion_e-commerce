@@ -1,5 +1,5 @@
 
-<?php include_once('../assets/setup/db.php') ?>
+<?php include_once('../../assets/setup/db.php') ?>
 
 <?php
          // Fetch the cart count
@@ -36,9 +36,9 @@
     />
     <link rel="stylesheet" href="../ckeditor/sample/style.css">
     <!-- Include CKEditor JavaScript -->
-<script src="../ckeditor/src/script.ts"></script>
+<!-- <script src="../ckeditor/src/script.ts"></script> -->
     <!-- Custom StyleSheet -->
-    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="stylesheet" href="../../css/styles.css" />
    
     <link rel="stylesheet" href="custom.css" />
     <title>True Style</title>
@@ -177,7 +177,7 @@
 
     <!-- Search modal -->
    
-<?php include_once('../assets/templates/_search_modal.php');?>
+<?php include_once('../../assets/templates/_search_modal.php');?>
  <!-- Search Modal -->
 
 

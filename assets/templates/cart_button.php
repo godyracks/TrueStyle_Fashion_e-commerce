@@ -2,7 +2,7 @@
     /* Add custom styles for the floating cart button */
     .float-cart {
         position: fixed;
-        bottom: 20px; /* Adjust the distance from the bottom as needed */
+        bottom: 70px; /* Adjust the distance from the bottom as needed */
         right: 20px; /* Adjust the distance from the right as needed */
     }
 

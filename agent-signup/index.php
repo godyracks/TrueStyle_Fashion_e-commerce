@@ -1,6 +1,7 @@
 <?php
 //session_start(); // Initialize the session
 
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
@@ -15,7 +16,12 @@ require '../vendor/autoload.php';
 
 include_once '../assets/setup/db.php';
 
+
+
 $msg = "";
+
+// Function to generate a sequential four-figure alphanumeric Agent ID
+
 
 if (isset($_POST['submit'])) {
     $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
@@ -33,7 +39,7 @@ if (isset($_POST['submit'])) {
         if (mysqli_num_rows(mysqli_query($conn, "SELECT * FROM user_info WHERE email='{$email}'")) > 0) {
             $msg = "<div class='alert alert-danger'>{$email} - This email address already exists. Kindly Log in.</div>";
         } elseif (mysqli_num_rows(mysqli_query($conn, "SELECT * FROM user_info WHERE name='{$name}'")) > 0) {
-            $msg = "<div class='alert alert-danger'>{$name} - This username already exists. Kindly Log in.</div>";
+            $msg = "<div class'alert alert-danger'>{$name} - This username already exists. Kindly Log in.</div>";
         } else {
             if ($password === $confirm_password) {
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -43,53 +49,60 @@ if (isset($_POST['submit'])) {
 
                 if ($stmt->execute()) {
                     $user_id = $stmt->insert_id; // Get the last inserted user ID
-                     // Insert a record into the agent_activity table
-    $activity_sql = "INSERT INTO agent_activity (user_id, deposit, withdraw, testimony, transactions, investments, total_earned, referral_list) VALUES (?, 0, 0, 0, 0, 0, 0, '')";
-    $activity_stmt = $conn->prepare($activity_sql);
-    $activity_stmt->bind_param("i", $email);
-    if ($activity_stmt->execute()) {
-        // Agent's activity record successfully inserted
-        // You can add additional logic or a success message here if needed
-    } else {
-        $msg = "<div class='alert alert-danger'>Something went wrong while inserting agent activity record.</div>";
-    }
 
-                    $token = bin2hex(random_bytes(16)); // Generate a random token
+                    // Insert a record into the agent_activity table
+                    $activity_sql = "INSERT INTO agent_activity (user_id, deposit, withdraw, testimony, transactions, investments, total_earned, referral_list, pin, agent_id) VALUES (?, 0, 0, 0, 0, 0, 0, '', '', '')";
+                    $activity_stmt = $conn->prepare($activity_sql);
+                    $activity_stmt->bind_param("s", $email);
+                    if ($activity_stmt->execute()) {
+                        // Agent's activity record successfully inserted
+                        // You can add additional logic or a success message here if needed
+                    } else {
+                        $msg = "<div class='alert alert-danger'>Something went wrong while inserting agent activity record.</div>";
+                    }
+
+                    // Generate a random token
+                    $token = bin2hex(random_bytes(16));
+
+                    // SQL query to insert the token into the auth_tokens table
                     $token_sql = "INSERT INTO auth_tokens (user_id, token) VALUES (?, ?)";
                     $token_stmt = $conn->prepare($token_sql);
                     $token_stmt->bind_param("is", $user_id, $token);
 
                     if ($token_stmt->execute()) {
-                        // Create an instance of PHPMailer
-                        $mail = new PHPMailer(true);
-
-                        try {
-                            // Server settings
-                            $mail->SMTPDebug = SMTP::DEBUG_OFF;
-                            $mail->isSMTP();
-                            $mail->Host = 'smtp.gmail.com';
-                            $mail->SMTPAuth = true;
-                            $mail->Username = 'godfreymatagaro@gmail.com'; // SMTP username
-                            $mail->Password = 'mdnpxflcotixeabh'; // SMTP password
-                            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-                            $mail->Port = 465;
-
-                            // Recipients
-                            $mail->setFrom('godfreymatagaro@gmail.com', 'Mailer');
-                            $mail->addAddress($email);
-
-                            // Content
-                            $mail->isHTML(true);
-                            $mail->Subject = 'Verify your email address';
-                            $mail->Body = 'Thank you for registering! Please click on the following link to verify your email address: <b><a href="http://localhost/truestylev1/verify/?token=' . $token . '">http://localhost/truestylev1/verify/?token=' . $token . '</a></b>';
-
-                            $mail->send();
-                            $msg = "<div class='alert alert-info'>We've sent a verification link to your email address. Please check your inbox.</div>";
-                        } catch (Exception $e) {
-                            $msg = "<div class='alert alert-danger'>Message could not be sent. Check your internet connection.Mailer Error: {$mail->ErrorInfo}</div>";
-                        }
+                        // Token successfully inserted
+                        // You can add any additional logic or success message here
                     } else {
                         $msg = "<div class='alert alert-danger'>Something went wrong while generating the verification token.</div>";
+                    }
+
+                    // Create an instance of PHPMailer
+                    $mail = new PHPMailer(true);
+
+                    try {
+                        // Server settings
+                        $mail->SMTPDebug = SMTP::DEBUG_OFF;
+                        $mail->isSMTP();
+                        $mail->Host = 'smtp.gmail.com';
+                        $mail->SMTPAuth = true;
+                        $mail->Username = 'godfreymatagaro@gmail.com'; // SMTP username
+                        $mail->Password = 'mdnpxflcotixeabh'; // SMTP password
+                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                        $mail->Port = 465;
+
+                        // Recipients
+                        $mail->setFrom('godfreymatagaro@gmail.com', 'Mailer');
+                        $mail->addAddress($email);
+
+                        // Content
+                        $mail->isHTML(true);
+                        $mail->Subject = 'Verify your email address';
+                        $mail->Body = 'Thank you for registering! Please click on the following link to verify your email address: <b><a href="http://localhost/truestylev1/verify/?token=' . $token . '">http://localhost/truestylev1/verify/?token=' . $token . '</a></b>';
+
+                        $mail->send();
+                        $msg = "<div class='alert alert-info'>We've sent a verification link to your email address. Please check your inbox.</div>";
+                    } catch (Exception $e) {
+                        $msg = "<div class='alert alert-danger'>Message could not be sent. Check your internet connection.Mailer Error: {$mail->ErrorInfo}</div>";
                     }
                 } else {
                     $msg = "<div class='alert alert-danger'>Something went wrong while inserting the user record.</div>";
@@ -102,7 +115,12 @@ if (isset($_POST['submit'])) {
         $msg = "<div class='alert alert-danger'>Password must be at least 6 characters long and contain a mixture of letters, special characters, and numbers.</div>";
     }
 }
+
+
+// Function to generate a sequential four-figure alphanumeric Agent ID
+
 ?>
+
 
 <?php include_once('../assets/product-page-temp/product-header.php') ?>
 <style>

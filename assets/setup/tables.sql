@@ -27,6 +27,18 @@ CREATE TABLE agent_activity (
 ALTER TABLE agent_activity ADD COLUMN pin VARCHAR(255);
 
 
+-- withdrawal requests 
+CREATE TABLE withdrawal_requests (
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    mpesa_number VARCHAR(255),
+    amount_withdrawn DECIMAL(10, 2),
+    request_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('Pending', 'Completed', 'Rejected') DEFAULT 'Pending'
+);
+
+
+
 --TOKENS TBL--
 
 CREATE TABLE `auth_tokens` (
