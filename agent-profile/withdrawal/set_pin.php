@@ -124,7 +124,60 @@ function insertAgentID($conn, $user_email, $agent_id) {
     }
 }
 ?>
+<style>
+     form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            form {
+                max-width: 100%;
+                margin: 0;
+                padding: 10px;
+            }
+
+            input[type="password"] {
+                margin-bottom: 10px;
+            }
+        }
+</style>
+<?php include_once('../templates/_header.php') ?>
 <!-- HTML form to set the PIN -->
 <form action="" method="POST">
     <label for="pin">Set your PIN:</label>
@@ -137,3 +190,4 @@ function redirectToWithdrawal() {
     window.location.href = '../withdrawal/index.php';
 }
 </script>
+<?php include_once('../templates/_footer.php') ?>

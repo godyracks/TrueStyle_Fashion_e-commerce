@@ -408,14 +408,14 @@ if ($result_user->num_rows > 0) {
 
             <div class="agent-details" id="agent-details" style="display: none;">
     <!-- <h2>TrueStyle Agents</h2> -->
-    <div class="agent-activity">
+    <a href="./deposit/"><div class="agent-activity">
         <h3>Deposit</h3>
         <!-- Add content related to deposits here -->
-    </div>
+    </div></a>
 
-    <div class="agent-activity">
-    <h3>Withdraw <a href="./withdrawal/">▼</a></h3>
-</div>
+    <a href="./withdrawal/"><div class="agent-activity">
+    <h3>Withdraw </h3>
+</div></a>
 
 
     <div class="agent-activity">

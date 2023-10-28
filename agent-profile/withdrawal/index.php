@@ -58,7 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Recipients
             $mail->setFrom('godfreymatagaro@gmail.com', 'Mailer');
-            $mail->addAddress($user_email); // Send the email to the user's email
+            $mail->addAddress($user_email, 'godfreymatagaro@gmail.com'); // Send the email to the user's email
+            
 
             $mail->isHTML(true);
             $mail->Subject = 'Withdrawal Request';
@@ -72,6 +73,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+// Retrieve withdrawal history from the database
+$historyQuery = "SELECT request_date, amount_withdrawn, status FROM withdrawal_requests WHERE user_id = ?";
+$historyStmt = mysqli_prepare($conn, $historyQuery);
+mysqli_stmt_bind_param($historyStmt, "s", $user_email);
+mysqli_stmt_execute($historyStmt);
+$historyResult = mysqli_stmt_get_result($historyStmt);
+$withdrawalHistory = mysqli_fetch_all($historyResult, MYSQLI_ASSOC);
+
 ?>
 
 
@@ -79,17 +89,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <style>
    /* Reset some default styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-    color: #333;
-}
 
 .container {
     max-width: 800px;
@@ -227,13 +226,15 @@ table th {
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>2023-10-28</td>
-                    <td>KES 100.00</td>
-                    <td>Completed</td>
-                </tr>
-                <!-- Add more rows for history -->
-            </tbody>
+    <?php foreach ($withdrawalHistory as $record): ?>
+        <tr>
+            <td><?php echo $record['request_date']; ?></td>
+            <td>KES <?php echo number_format($record['amount_withdrawn'], 2); ?></td>
+            <td><?php echo $record['status']; ?></td>
+        </tr>
+    <?php endforeach; ?>
+</tbody>
+
         </table>
     </section>
 </main>
