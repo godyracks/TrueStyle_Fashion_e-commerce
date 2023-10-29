@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $agentId = getAgentIdByEmail($conn, $user_email);
 
         if ($agentId) {
-            mysqli_stmt_bind_param($insertStmt, "ids", $agentId, $amount, $mpesaTransactionId);
+            mysqli_stmt_bind_param($insertStmt, "sds", $agentId, $amount, $mpesaTransactionId);
             mysqli_stmt_execute($insertStmt);
 
             // Deposit successfully added
@@ -49,13 +49,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 function getAgentIdByEmail($conn, $email) {
-    $query = "SELECT id FROM agents WHERE user_id = ?";
+    $query = "SELECT user_id FROM agent_activity WHERE user_id = ?";
     $stmt = mysqli_prepare($conn, $query);
     mysqli_stmt_bind_param($stmt, "s", $email);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
     $row = mysqli_fetch_assoc($result);
-    return $row['id'];
+    return $row['user_id'];
 }
 
 ?>
@@ -102,55 +102,68 @@ select {
     font-size: 16px;
     margin-bottom: 15px;
 }
+.lipa-na-mpesa-logo {
+        text-align: center;
+    }
 
+    .lipa-na-mpesa-logo img {
+        max-width: 200px; /* Adjust the width as needed */
+        height: auto;
+        margin-top: 20px; /* Add some space between the logo and the content */
+    }
 /* Additional CSS styling for buttons, confirmation message, etc. */
 
 </style>
 <main>
-        <section class="deposit-form">
-            <h2>Deposit Information</h2>
-            <form action="process_deposit.php" method="POST">
-                <div class="input-group">
-                    <label for="amount">Amount to Deposit:</label>
-                    <input type="number" id="amount" name="amount" required>
-                </div>
-                <div class="input-group">
-                    <label for="payment-method">Payment Method:</label>
-                    <select id="payment-method" name="payment-method">
-                        <option value="credit-card">Lipa Na M-Pesa</option>
-                     
-                    </select>
-                </div>
-                <!-- Additional input fields for payment details based on selected method -->
-                <div class="input-group">
-                    <!-- Payment details input fields here -->
-                </div>
-                <div class="input-group">
-    <label for="mpesa-transaction-id">M-Pesa Transaction ID:</label>
-    <input type="text" id="mpesa-transaction-id" name="mpesa-transaction-id" required>
-</div>
-
-                <button type="submit">Deposit</button>
-            </form>
-            <div class="confirmation">
-                <!-- Display deposit confirmation message here -->
+    <section class="deposit-form">
+        <h2>Deposit Information</h2>
+        <p>Dear Truestyle Agent, to make deposits, follow the following steps. Your deposits will be confirmed shortly.</p>
+        <div class="lipa-na-mpesa-logo">
+                <!-- Placeholder for the Lipa Na M-Pesa logo -->
+                <img src="../../images/mpesa-logo.png" alt="Lipa Na M-Pesa Logo">
             </div>
-        </section>
+        <form action="process_deposit.php" method="POST">
+            <div class="input-group">
+                <label for="amount">Amount to Deposit:</label>
+                <input type="number" id="amount" name="amount" required>
+            </div>
+            <div class="input-group">
+                <label for="payment-method">Payment Method:</label>
+                <select id="payment-method" name="payment-method">
+                    <option value="credit-card">Lipa Na M-Pesa</option>
+                    <!-- Add more payment methods as needed -->
+                </select>
+            </div>
+            <!-- Additional input fields for payment details based on selected method -->
+            <div class="input-group">
+                <!-- Payment details input fields here -->
+            </div>
+            <div class="input-group">
+                <label for="mpesa-transaction-id">M-Pesa Transaction ID:</label>
+                <input type="text" id="mpesa-transaction-id" name="mpesa-transaction-id" required>
+            </div>
+          
+            <button type="submit">Deposit</button>
+        </form>
+        <div class="confirmation">
+            <!-- Display deposit confirmation message here -->
+        </div>
+    </section>
 
-        <section class="deposit-history">
-            <h2>Deposit History</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Display deposit history records here -->
-                </tbody>
-            </table>
-        </section>
-    </main>
+    <section class="deposit-history">
+        <h2>Deposit History</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Display deposit history records here -->
+            </tbody>
+        </table>
+    </section>
+</main>
     <?php include_once('../templates/_footer.php'); ?>

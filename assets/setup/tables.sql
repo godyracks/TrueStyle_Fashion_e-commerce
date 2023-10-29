@@ -37,7 +37,20 @@ CREATE TABLE withdrawal_requests (
     status ENUM('Pending', 'Completed', 'Rejected') DEFAULT 'Pending'
 );
 
-ALTER TABLE agent_activity MODIFY COLUMN user_id VARCHAR(255);
+ALTER TABLE withdrawal_requests MODIFY COLUMN user_id VARCHAR(255);
+
+-- Agents Deposits
+CREATE TABLE agent_deposits (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    agent_id VARCHAR(255) NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    mpesa_transaction_id VARCHAR(255) NOT NULL,
+    status VARCHAR(20) DEFAULT 'Pending',
+    deposit_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    -- Add any other columns you need for additional information
+    FOREIGN KEY (agent_id) REFERENCES agent_activity(user_id)
+);
+
 
 
 
