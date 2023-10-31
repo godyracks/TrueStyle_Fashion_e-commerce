@@ -26,6 +26,9 @@ CREATE TABLE agent_activity (
 );
 ALTER TABLE agent_activity ADD COLUMN pin VARCHAR(255);
 
+ALTER TABLE agent_activity ADD COLUMN referral_code VARCHAR(20);
+
+
 
 -- withdrawal requests 
 CREATE TABLE withdrawal_requests (
@@ -40,16 +43,32 @@ CREATE TABLE withdrawal_requests (
 ALTER TABLE withdrawal_requests MODIFY COLUMN user_id VARCHAR(255);
 
 -- Agents Deposits
+-- CREATE TABLE agent_deposits (
+--     id INT AUTO_INCREMENT PRIMARY KEY,
+--     agent_id VARCHAR(255) NOT NULL,
+--     amount DECIMAL(10, 2) NOT NULL,
+--     mpesa_transaction_id VARCHAR(255) NOT NULL,
+--     status VARCHAR(20) DEFAULT 'Pending',
+--     deposit_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     -- Add any other columns you need for additional information
+--     FOREIGN KEY (agent_id) REFERENCES agent_activity(user_id)
+-- );
+
+-- agent deposits
+
 CREATE TABLE agent_deposits (
     id INT AUTO_INCREMENT PRIMARY KEY,
     agent_id VARCHAR(255) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
-    mpesa_transaction_id VARCHAR(255) NOT NULL,
+    mpesa_number VARCHAR(255) NOT NULL,
     status VARCHAR(20) DEFAULT 'Pending',
     deposit_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    -- Add any other columns you need for additional information
+    CheckoutRequestID VARCHAR(255), -- Added column for CheckoutRequestID
+    MerchantRequestID VARCHAR(255), -- Added column for MerchantRequestID
+    mpesa_receipt VARCHAR(255), -- Updated column name from payments table
     FOREIGN KEY (agent_id) REFERENCES agent_activity(user_id)
 );
+
 
 
 
@@ -185,24 +204,6 @@ CREATE TABLE `wishlist` (
   FOREIGN KEY (`product_id`) REFERENCES `products`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-
--- CREATE TABLE jobs (
---     job_id INT AUTO_INCREMENT PRIMARY KEY,
---     job_name VARCHAR(100) NOT NULL,
---     job_detail TEXT,
---     job_category INT,
---     job_location VARCHAR(100),
---     job_description TEXT,
---     job_responsibility JSON,
---     job_qualifications JSON,
---     vacancy_number INT,
---     job_time TIME,
---     is_featured TINYINT(1),
---     deadline TIMESTAMP,
---     salary_range VARCHAR(100),
---     company_name VARCHAR(100) NOT NULL,
---     posted_date DATETIME NOT NULL
--- );
 
 CREATE TABLE jobs (
     job_id INT AUTO_INCREMENT PRIMARY KEY,

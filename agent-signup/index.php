@@ -50,10 +50,13 @@ if (isset($_POST['submit'])) {
                 if ($stmt->execute()) {
                     $user_id = $stmt->insert_id; // Get the last inserted user ID
 
+                      // Generate a random referral code
+                    $referral_code = bin2hex(random_bytes(4));
+
                     // Insert a record into the agent_activity table
-                    $activity_sql = "INSERT INTO agent_activity (user_id, deposit, withdraw, testimony, transactions, investments, total_earned, referral_list, pin, agent_id) VALUES (?, 0, 0, 0, 0, 0, 0, '', '', '')";
+                    $activity_sql = "INSERT INTO agent_activity (user_id, deposit, withdraw, testimony, transactions, investments, total_earned, referral_list, pin, agent_id, referral_code) VALUES (?, 0, 0, '', 0, 0, 0, '', '', ?, ?)";
                     $activity_stmt = $conn->prepare($activity_sql);
-                    $activity_stmt->bind_param("s", $email);
+                    $activity_stmt->bind_param("ssssssssss", $user_id, $email, $referral_code);
                     if ($activity_stmt->execute()) {
                         // Agent's activity record successfully inserted
                         // You can add additional logic or a success message here if needed
