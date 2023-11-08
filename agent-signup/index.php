@@ -1,7 +1,6 @@
 <?php
 //session_start(); // Initialize the session
 
-
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
@@ -16,12 +15,7 @@ require '../vendor/autoload.php';
 
 include_once '../assets/setup/db.php';
 
-
-
 $msg = "";
-
-// Function to generate a sequential four-figure alphanumeric Agent ID
-
 
 if (isset($_POST['submit'])) {
     $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
@@ -34,12 +28,34 @@ if (isset($_POST['submit'])) {
     // Convert the selected option to "agent" or "user"
     $user_type = ($selected_option === "Yes") ? "agent" : "agent";
 
+    $referral_code = filter_input(INPUT_GET, 'referral_code', FILTER_SANITIZE_STRING); // Get referral code from the URL
+
+    // If you have a valid referral code, get the referrer's user_id
+    $referrer_id = null;
+    if (!empty($referral_code)) {
+        $sql = "SELECT email, referrer_id, level FROM agent_activity WHERE referral_code = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $referral_code);
+        if ($stmt->execute()) {
+            $result = $stmt->get_result();
+            if ($result->num_rows === 1) {
+                $row = $result->fetch_assoc();
+                $referrer_id = $row['email'];
+                $referrer_referrer_id = $row['referrer_id'];
+                $referrer_level = $row['level'];
+            }
+        }
+    }
+
     // Validate password
     if (preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/', $password)) {
-        if (mysqli_num_rows(mysqli_query($conn, "SELECT * FROM user_info WHERE email='{$email}'")) > 0) {
+        $emailExists = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM user_info WHERE email='{$email}'"));
+        $nameExists = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM user_info WHERE name='{$name}'"));
+
+        if ($emailExists > 0) {
             $msg = "<div class='alert alert-danger'>{$email} - This email address already exists. Kindly Log in.</div>";
-        } elseif (mysqli_num_rows(mysqli_query($conn, "SELECT * FROM user_info WHERE name='{$name}'")) > 0) {
-            $msg = "<div class'alert alert-danger'>{$name} - This username already exists. Kindly Log in.</div>";
+        } elseif ($nameExists > 0) {
+            $msg = "<div class='alert alert-danger'>{$name} - This username already exists. Kindly Log in.</div>";
         } else {
             if ($password === $confirm_password) {
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -50,18 +66,46 @@ if (isset($_POST['submit'])) {
                 if ($stmt->execute()) {
                     $user_id = $stmt->insert_id; // Get the last inserted user ID
 
-                      // Generate a random referral code
-                    $referral_code = bin2hex(random_bytes(4));
+                    // Insert the user's referral code
+                    if (empty($referral_code)) {
+                        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                        $referral_code = '';
+                        for ($i = 0; $i < 10; $i++) {
+                            $referral_code .= $characters[random_int(0, strlen($characters) - 1)];
+                        }
+                        var_dump($referral_code);
 
-                    // Insert a record into the agent_activity table
-                    $activity_sql = "INSERT INTO agent_activity (user_id, deposit, withdraw, testimony, transactions, investments, total_earned, referral_list, pin, agent_id, referral_code) VALUES (?, 0, 0, '', 0, 0, 0, '', '', ?, ?)";
-                    $activity_stmt = $conn->prepare($activity_sql);
-                    $activity_stmt->bind_param("ssssssssss", $user_id, $email, $referral_code);
-                    if ($activity_stmt->execute()) {
-                        // Agent's activity record successfully inserted
-                        // You can add additional logic or a success message here if needed
-                    } else {
-                        $msg = "<div class='alert alert-danger'>Something went wrong while inserting agent activity record.</div>";
+                        // Insert a record into the agent_activity table
+                        $activity_sql = "INSERT INTO agent_activity (agent_id, email, referral_code, referrer_id, level) VALUES (?, ?, ?, ?, ?)";
+                        $activity_stmt = $conn->prepare($activity_sql);
+
+                        if (!empty($referral_code) && !empty($referrer_id)) {
+                            $referrer_level += 1;
+                            $activity_stmt->bind_param("issii", $user_id, $email, $referral_code, $referrer_id, $referrer_level);
+                        } else {
+                            $referrer_level = 1;
+                            $activity_stmt->bind_param("issii", $user_id, $email, $referral_code, $referrer_id, $referrer_level);
+                        }
+
+                        if ($activity_stmt->execute()) {
+                            // Agent's activity record successfully inserted
+
+                            if (!empty($referrer_id)) {
+                                // If there's a referrer, update their information
+                                $update_referrer_sql = "UPDATE agent_activity SET referrer_id = ?, level = ? WHERE agent_id = ?";
+                                $update_referrer_stmt = $conn->prepare($update_referrer_sql);
+                                $update_referrer_stmt->bind_param("iii", $user_id, $referrer_level, $referrer_id);
+
+                                if ($update_referrer_stmt->execute()) {
+                                    // Referrer's information updated
+                                } else {
+                                    $msg = "<div class='alert alert-danger'>Something went wrong while updating the referrer's information.</div>";
+                                }
+                            }
+                            // You can add additional logic or a success message here if needed
+                        } else {
+                            $msg = "<div class='alert alert-danger'>Something went wrong while inserting agent activity record.</div>";
+                        }
                     }
 
                     // Generate a random token

@@ -89,7 +89,7 @@ if (isset($_POST['submit'])) {
                     <div class="dialog-content">
                         <h2>Error</h2>
                         <p><?php echo $msg; ?></p>
-                        <button onclick="location.href='../home'">OK</button>
+                        <button onclick="location.href='../login'">OK</button>
                     </div>
                 </div>
             <?php endif; ?>

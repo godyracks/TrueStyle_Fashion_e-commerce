@@ -13,18 +13,19 @@ CREATE TABLE `user_info` (
 
 -- AGENTS TABLE
 CREATE TABLE agent_activity (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT, -- Foreign key reference to the agent's user_id
-    deposit DECIMAL(10, 2),
-    withdraw DECIMAL(10, 2),
-    testimony TEXT,
-    transactions INT,
-    investments DECIMAL(10, 2),
-    total_earned DECIMAL(10, 2),
-    referral_list TEXT,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    agent_id INT,
+    email VARCHAR(255) NOT NULL,
+    deposit DECIMAL(10, 2) DEFAULT 0.00,
+    withdraw DECIMAL(10, 2) DEFAULT 0.00,
+    testimony INT DEFAULT 0,
+    transactions INT DEFAULT 0,
+    investments DECIMAL(10, 2) DEFAULT 0.00,
+    total_earned DECIMAL(10, 2) DEFAULT 0.00,
+    referral_code VARCHAR(10) UNIQUE,
+    referrer_id INT, -- The ID of the referring agent
+    level INT DEFAULT 1 -- The MLM level of the agent
 );
-ALTER TABLE agent_activity ADD COLUMN pin VARCHAR(255);
 
 ALTER TABLE agent_activity ADD COLUMN referral_code VARCHAR(20);
 
@@ -70,6 +71,13 @@ CREATE TABLE agent_deposits (
 );
 
 
+-- LOGIN ATTEMPTS
+CREATE TABLE login_attempts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    attempts INT DEFAULT 0,
+    last_attempt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
 
 
 

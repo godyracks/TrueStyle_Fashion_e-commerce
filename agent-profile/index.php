@@ -11,7 +11,13 @@ include_once('../assets/setup/db.php');
 include_once('../assets/product-page-temp/product-header.php');
 
 // Retrieve user information
-$query_user = "SELECT * FROM user_info WHERE email = '$user_id'";
+// $query_user = "SELECT * FROM user_info WHERE email = '$user_id'";
+$query_user = "SELECT user_info.*, agent_activity.referral_code 
+              FROM user_info 
+              LEFT JOIN agent_activity 
+              ON user_info.email = agent_activity.email
+              WHERE user_info.email = '$user_id'";
+
 $result_user = mysqli_query($conn, $query_user);
 
 $userInitials = '';
@@ -437,11 +443,20 @@ if ($result_user->num_rows > 0) {
         <h3>Total Earned</h3>
         <!-- Add content related to total earnings here -->
     </div>
+    <div class="agent-activity">
+    <h3>Referral Link</h3>
+    <p>Your referral link: <span id="referral-link">http://localhost/truestylev1/agent-signup?referral_code=<?php echo $row['referral_code']; ?></span></p>
+    <button id="copy-referral-link"><i class='bx bx-copy'></i></button>
+</div>
+
+
 
     <div class="agent-activity">
         <h3>Referral List</h3>
         <!-- Add content related to the referral list and referral links here -->
     </div>
+   
+
 </div>
 
 
@@ -486,7 +501,26 @@ withdrawCard.addEventListener('click', () => {
 
 
 
+
+
     </script>
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const copyButton = document.getElementById('copy-referral-link');
+    const referralLink = document.getElementById('referral-link');
+
+    copyButton.addEventListener('click', () => {
+        const range = document.createRange();
+        range.selectNode(referralLink);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        document.execCommand('copy');
+        window.getSelection().removeAllRanges();
+        alert('Referral link copied!');
+    });
+});
+</script>
+
 
 <?php
 include_once('../assets/cart-temp/cart-footer.php');
