@@ -415,7 +415,7 @@ if ($result_user->num_rows > 0) {
             <div class="agent-details" id="agent-details" style="display: none;">
     <!-- <h2>TrueStyle Agents</h2> -->
     <a href="./deposit/"><div class="agent-activity">
-        <h3>Deposit</h3>
+        <h3>Deposit <i class='bx bx-plus'></i><i class='bx bxs-coin-stack' ></i></h3>
         <!-- Add content related to deposits here -->
     </div></a>
 

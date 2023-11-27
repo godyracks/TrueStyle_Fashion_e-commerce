@@ -230,6 +230,9 @@ CREATE TABLE jobs (
     job_poster_email VARCHAR(100) NOT NULL
 );
 
+DELETE FROM jobs
+WHERE MONTH(deadline) <= 10 AND YEAR(deadline) = YEAR(CURDATE());
+
 
  CREATE TABLE models (
     id INT AUTO_INCREMENT PRIMARY KEY,

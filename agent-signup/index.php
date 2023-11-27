@@ -23,7 +23,7 @@ if (isset($_POST['submit'])) {
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm-password'];
     $code = bin2hex(random_bytes(16)); // Generate a random code
-    $selected_option = $_POST['user-type']; // Get the selected option ("Not Sure," "Yes," or "No")
+     $selected_option = $_POST['user-type']; // Get the selected option ("Not Sure," "Yes," or "No")
 
     // Convert the selected option to "agent" or "user"
     $user_type = ($selected_option === "Yes") ? "agent" : "agent";
