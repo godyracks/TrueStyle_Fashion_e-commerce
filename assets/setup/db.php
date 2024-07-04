@@ -4,7 +4,7 @@ session_start();
 
 $host = 'localhost';
 $username = 'root';
-$password = '@godygaro66';
+$password = '******';
 $database = 'truestyle';
 
 // Create a connection
