@@ -1,0 +1,111 @@
+/* Reset some default styles */
+body, h1, h2, h3, p, ul, li {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Hero section styles */
+/* Add styles for the Owl Carousel */
+.owl-carousel {
+    display: none;
+}
+
+/* Hero section styles */
+.hero {
+    position: relative;
+    background-color: #EDF5E1;
+    padding: 0; /* Remove padding to adjust within the carousel */
+    overflow: hidden;
+}
+
+.hero-content {
+    position: relative;
+    text-align: center;
+    padding: 150px 0;
+    color: #EDF5E1;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    opacity: 0.8;
+}
+
+.btn-primary {
+    display: inline-block;
+    background-color: #FF6B6B;
+    color: #EDF5E1;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #E63946;
+}
+
+
+/* About section styles */
+.about {
+    background-color: #EDF5E1;
+    padding: 50px 0;
+    text-align: center;
+}
+
+.about h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+/* Models section styles */
+.models {
+    padding: 50px 0;
+    text-align: center;
+}
+
+.models h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+/* Contact section styles */
+.contact {
+    background-color: #EDF5E1;
+    padding: 50px 0;
+    text-align: center;
+}
+
+.contact h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .hero-content {
+        padding: 100px 0;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+}

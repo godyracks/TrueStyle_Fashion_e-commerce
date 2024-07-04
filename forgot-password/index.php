@@ -79,111 +79,7 @@ if (isset($_POST['submit'])) {
 
 <?php include_once('../assets/product-page-temp/product-header.php') ?>
 <style>
-  /* Container styling */
-.container3 {
-    margin-top: 50px;
-}
 
-/* Form container */
-.content-wthree {
-    background: #fff;
-    padding: 25px;
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-}
-
-/* Input container */
-.input-container3 {
-    display: flex;
-    flex-direction: column;
-}
-
-.email,
-.btn {
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-/* Button styling */
-.btn {
-    background-color: #3498db;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
-}
-
-.btn:hover {
-    background-color: #2980b9;
-}
-
-/* Styled dialog */
-.dialog {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-    display: none;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-}
-
-.dialog-title {
-    margin-top: 0;
-}
-
-.dialog-btn-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.dialog-btn {
-    background-color: #3498db;
-    border: none;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
-}
-
-.dialog-btn:hover {
-    background-color: #2980b9;
-}
-
-/* Clearfix for floating elements */
-.clearfix::after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
-/* Responsive adjustments */
-@media screen and (max-width: 768px) {
-    .container3 {
-        margin-top: 30px;
-    }
-
-    .content-wthree {
-        padding: 20px;
-    }
-
-    .email,
-    .btn {
-        padding: 8px;
-    }
-
-    .dialog {
-        padding: 15px;
-        max-width: 80%;
-    }
-}
 
 </style>
 
@@ -191,7 +87,7 @@ if (isset($_POST['submit'])) {
 <br>
 <br>
 <br>
-s
+
 <div class="container3">
     <div class="content-wthree">
         <h2>Forgot Password</h2>

@@ -1,58 +1,210 @@
+<style>
+.total-price {
+    text-align: center;
+}
+.option-btn {
+    margin: 5px;
+    padding: 5px 5px;
+    background-color: #28a745; 
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.option-btn:hover {
+    background-color: #218838;
+}
+.delete-btn {
+    margin: 5px;
+    padding: 5px 10px;
+    background-color: #964B00; 
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.delete-btn:hover {
+    background-color: #c82333; 
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.total-price {
+    text-align: center;
+}
+</style>
+
 <div class="container cart">
-  <table>
-    <tr>
-      <th>Product</th>
-      <th>Quantity</th>
-      <th>Subtotal</th>
-    </tr>
-    <?php
-    $cart_query = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
-    $grand_total = 0;
+  <?php
+  // Start or resume the session
+ // session_start();
+  
+  include_once('../assets/setup/db.php');
 
-    if (mysqli_num_rows($cart_query) > 0) {
-      while ($fetch_cart = mysqli_fetch_assoc($cart_query)) {
-        $sub_total = (float)$fetch_cart['price'] * (int)$fetch_cart['quantity'];
+  // Check if the user is logged in
+  $user_id = isset($_SESSION['SESSION_EMAIL']) ? $_SESSION['SESSION_EMAIL'] : null;
 
-        $grand_total += $sub_total;
-    ?>
-        <tr>
-          <td>
-            <div class="cart-info">
-              <img src="../uploaded_img/<?php echo $fetch_cart['image']; ?>" alt="" />
-              <div>
-                <p><?php echo $fetch_cart['name']; ?></p>
-                <span>Price: KES <?php echo $fetch_cart['price']; ?>/-</span> <br />
-                <a href="../cart/index.php?remove=<?php echo $fetch_cart['id']; ?>" class="delete-btn" onclick="return confirm('Remove item from cart?');">Remove</a>
-              </div>
-            </div>
-          </td>
-          <td>
-            <form action="" method="post">
-              <input type="hidden" name="cart_id" value="<?php echo $fetch_cart['id']; ?>">
-              <input type="number" min="1" name="cart_quantity" value="<?php echo $fetch_cart['quantity']; ?>">
-              <input type="submit" name="update_cart" value="Update" class="option-btn">
-            </form>
-          </td>
-          <td>KES <?php echo $sub_total; ?>/-</td>
-        </tr>
-    <?php
-      }
+  if (isset($_POST['update_update_btn'])) {
+    $update_value = $_POST['update_quantity'];
+    $update_id = $_POST['update_quantity_id'];
+
+    // Check if the user is logged in
+    if ($user_id) {
+      // User is logged in, update quantity in the user's cart
+      $update_quantity_query = mysqli_query($conn, "UPDATE `cart` SET quantity = '$update_value' WHERE id = '$update_id' AND user_id = '$user_id'");
     } else {
-      echo '<tr><td style="padding:20px; text-transform:capitalize;" colspan="6">No items added</td></tr>';
+      // User is not logged in, update quantity in the guest cart
+      $session_id = session_id();
+      $update_quantity_query = mysqli_query($conn, "UPDATE `guest_cart` SET quantity = '$update_value' WHERE guest_id = '$update_id' AND session_id = '$session_id'");
+    }
+
+    if ($update_quantity_query) {
+      header('location:../cart/');
+    }
+  }
+
+  // Initialize a flag to track if guest cart items were displayed
+  $guest_cart_displayed = false;
+
+  // Function to fetch the product image for a given product ID
+  function fetchProductImage($conn, $productID)
+  {
+    $query = "SELECT image_path FROM product_images WHERE product_id = ? LIMIT 1";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "i", $productID);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    if ($row = mysqli_fetch_assoc($result)) {
+      return $row['image_path'];
+    }
+    return null; // Return null if no image is found
+  }
+
+  // Retrieve items from the user's cart if logged in
+  $select_cart = mysqli_query($conn, "SELECT cart.*, products.price, products.name, cart.size FROM `cart` JOIN `products` ON cart.product_id = products.id WHERE cart.user_id = '$user_id'") or die('query failed');
+
+  $grand_total = 0;
+
+  // Check if there are items in the user's cart
+  if (mysqli_num_rows($select_cart) > 0) {
+    echo '<table>
+            <tr>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th>Subtotal</th>
+             
+            </tr>';
+            while ($fetch_cart = mysqli_fetch_assoc($select_cart)) {
+              $product_image = fetchProductImage($conn, $fetch_cart['product_id']);
+              $sub_total = (float)$fetch_cart['price'] * (int)$fetch_cart['quantity'];
+              $grand_total += $sub_total;
+              echo '<tr>
+                      <td>
+                        <div class="cart-info">
+                          <img src="../uploaded_img/' . $product_image . '" alt="" />
+                          <div>
+                            <p>' . $fetch_cart['name'] . '</p>
+                            <span>Price: KES ' . $fetch_cart['price'] . '/-</span> <br />
+                            <span>Size: ' . $fetch_cart['size'] . '</span> <br />
+                            <a href="../cart/add-to-cart.php?remove=' . $fetch_cart['id'] . '" class="delete-btn" onclick="return confirm(\'Remove item from cart?\');">Remove</a>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <form action="" method="post">
+                          <input type="hidden" name="update_quantity_id"  value="' . $fetch_cart['id'] . '" >
+                          <input type="number" name="update_quantity" min="1"  value="' . $fetch_cart['quantity'] . '" >
+                          <input type="submit" value="update" name="update_update_btn" class="option-btn">
+                        </form>
+                      </td>
+                      <td>KES ' . $sub_total . '/-</td>
+                    </tr>';
+            }
+            
+    echo '</table>';
+  }
+
+  // If the user is not logged in, retrieve and display items from the guest cart
+  if (!$user_id) {
+    $session_id = session_id(); // Get the guest session ID
+    $select_guest_cart = mysqli_query($conn, "SELECT guest_cart.*, products.price, products.name, products.id as product_id FROM `guest_cart` JOIN `products` ON guest_cart.product_id = products.id WHERE guest_cart.session_id = '$session_id'") or die('query failed');
+
+    if (mysqli_num_rows($select_guest_cart) > 0) {
+      echo '<h2>Guest Cart Items</h2>';
+      echo '<table>
+              <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                
+              </tr>';
+      while ($fetch_guest_cart = mysqli_fetch_assoc($select_guest_cart)) {
+        $product_image = fetchProductImage($conn, $fetch_guest_cart['product_id']);
+        $sub_total = (float)$fetch_guest_cart['price'] * (int)$fetch_guest_cart['quantity'];
+        $grand_total += $sub_total;
+        echo '<tr>
+                <td>
+                  <div class="cart-info">
+                    <img src="../uploaded_img/' . $product_image . '" alt="" />
+                    <div>
+                      <p>' . $fetch_guest_cart['name'] . '
+                      <span>Price: KES ' . $fetch_guest_cart['price'] . '/-</span>
+                      <a href="../cart/add-to-cart.php?remove=' . $fetch_guest_cart['guest_id'] . '" class="delete-btn" onclick="return confirm(\'Remove item from cart?\');">Remove</a>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <form action="../cart/add-to-cart.php" method="post">
+                    <input type="hidden" name="update_quantity_id"  value="' . $fetch_guest_cart['product_id'] . '" >
+                    <input type="number" name="update_quantity" min="1"  value="' . $fetch_guest_cart['quantity'] . '" >
+                    <input type="submit" value="update" name="update_update_btn" class="option-btn">
+                  </form>
+                </td>
+                <td>KES ' . $sub_total . '/-</td>
+                
+              </tr>';
+      }
+      echo '</table>';
+      $guest_cart_displayed = true; // Set the flag to true
+    }
+  }
+
+  // If both carts are empty, display "Cart Not Found" message
+  if (!$guest_cart_displayed && mysqli_num_rows($select_cart) === 0) {
+    echo '<img src="../images/cart.jpg" alt="Cart Not Found" />
+          <p style="color: orange; font-size: 20px;">Cart is empty. Start shopping now!</p>';
+  }
+  ?>
+  <div class="total-price">
+    <?php
+    if ($grand_total > 0) {
+      echo '<table>
+              <tr>
+                <td>Grand Total</td>
+                <td>KES ' . $grand_total . '/-</td>
+              </tr>
+            </table>
+            <a href="../checkout/" class="btn">Proceed to Checkout</a>';
     }
     ?>
-  </table>
-  <div class="total-price">
-    <table>
-      <tr>
-        <td>Grand Total</td>
-        <td>KES <?php echo $grand_total; ?>/-</td>
-      </tr>
-    </table>
-    <?php
-    // Enable the "proceed to checkout" button only if there are items in the cart
-    $checkoutButtonClass = ($grand_total > 0) ? '' : 'disabled';
-    ?>
-    <a href="#" class="btn <?php echo $checkoutButtonClass; ?>">Proceed to Checkout</a>
   </div>
 </div>

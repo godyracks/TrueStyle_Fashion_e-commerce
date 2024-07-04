@@ -1,6 +1,6 @@
 <?php include_once('../assets/product-page-temp/product-header.php') ?>
 <?php 
-                $user_id = $_SESSION['SESSION_NAME'];
+                //$user_id = $_SESSION['SESSION_NAME'];
 
 
   // Dump the $user_id variable

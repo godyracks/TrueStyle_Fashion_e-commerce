@@ -4,7 +4,7 @@ session_start();
 
 $host = 'localhost';
 $username = 'root';
-$password = '@godygaro66';
+$password = '******';
 $database = 'truestyle';
 
 // Create a connection
@@ -17,7 +17,7 @@ if (!$conn) {
 
 //echo 'Connected successfully';
 
-// ... Rest of your code ...
+
 
 // Close the connection
 //mysqli_close($conn);

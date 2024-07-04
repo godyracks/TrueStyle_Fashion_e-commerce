@@ -32,7 +32,7 @@ if (isset($_GET['token'])) {
             if ($password === $confirm_password) {
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-                $update_sql = "UPDATE users SET password='{$hashed_password}' WHERE id='{$user_id}'";
+                $update_sql = "UPDATE user_info SET password='{$hashed_password}' WHERE id='{$user_id}'";
                 $update_result = mysqli_query($conn, $update_sql);
 
                 if ($update_result) {
